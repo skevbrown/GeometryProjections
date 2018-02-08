@@ -62,6 +62,12 @@ def zeta(x,y,z):
     comp = np.complex(re,im)
     return comp
 
+def eta(x,y,z):
+    re = x/  (1+z)
+    im = -y/ (1+z)
+    comp = np.complex(re,im)
+    return comp
+
 def xyzunit(zReal,zImag):
     denom = 1 + zReal**2 + zImag**2
     x = 2*zReal / denom
@@ -72,7 +78,12 @@ def xyzunit(zReal,zImag):
 
 # Vectorize
 zetavec = np.vectorize(zeta)
+etavec = np.vectorize(eta)
 xyzunitvec = np.vectorize(xyzunit)
+
+
+
+
 
 
 
@@ -356,11 +367,37 @@ ax2.scatter(xyzAng,  xyzRad,    lw=0.5, c='red' )
 
 
 
-fig3 = plt.figure(3)
+#fig3 = plt.figure(3)
 
-plt.plot(np.real(zetaArray), 'b' )
-plt.plot(np.imag(zetaArray), 'r' )
+#plt.plot(np.real(zetaArray), 'b' )
+#plt.plot(np.imag(zetaArray), 'r' )
 
+zvec = np.arange(-0.75,0.75,1.5/200)
+yvec = np.array( [ 0 ] * len(zvec) )
+xvec = np.sqrt(1 - np.abs(zvec**2) + np.abs(yvec**2))
+
+riemMat = np.zeros(len(xvec),dtype=[('xvec','f8'),('yvec','f8'),
+('zvec','f8'),('ZetaR','f8'),('ZetaI','f8'),('EtaR','f8'),
+('EtaI','f8')])
+
+riemMat['xvec'] = xvec
+riemMat['yvec'] = yvec
+riemMat['zvec'] = zvec
+
+Zeta=zetavec(riemMat['xvec'],riemMat['yvec'],riemMat['zvec'])
+Eta=etavec(riemMat['xvec'],riemMat['yvec'],riemMat['zvec'])
+riemMat['ZetaR'] = Zeta.real
+riemMat['ZetaI'] = Zeta.imag
+riemMat['EtaR'] = Eta.real
+riemMat['EtaI'] = Eta.imag
+
+fig4 = plt.figure(4)
+
+plt.plot(riemMat['xvec'],'black',linewidth=1.1)
+plt.plot(riemMat['zvec'],'b',linewidth=0.7)
+plt.plot(riemMat['ZetaR'],'r',linewidth=0.7)
+plt.plot(riemMat['EtaR'],'g',linewidth=0.7)
+#plt.ylim([-1.0,5.0])
 
 
 
