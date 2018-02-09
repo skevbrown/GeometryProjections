@@ -48,8 +48,9 @@ normal1 = np.array([1,1,1])
 point2 = np.array([0,0,1])
 normal2 = np.array([1,1,1])
 
+#xArray = np.arange(0,1,1/100); yArray = np.arange(0,1,1/100)
 
-xx, yy = np.meshgrid(range(2),range(2) )
+xx, yy = np.meshgrid(range(2),range(2))
 
 d1 = -np.sum(point1*normal1) # Dot product
 z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1/normal1[2]

@@ -377,14 +377,14 @@ ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
 
 
-fig2 = plt.figure(2)
-ax2 = fig2.gca(projection='polar' )
+#fig3 = plt.figure(3)
+#ax2 = fig3.gca(projection='polar' )
 
 xyzRad = np.sqrt(xyzRand[:,0]**2 + xyzRand[:,1]**2 ); 
 xyzAng = np.arcsin(xyzRand[:,1]/xyzRad );
 
 #ax1 = plt.subplot(111, projection='polar')
-ax2.scatter(xyzAng,  xyzRad,  lw=0.5, c='red' )
+#ax2.scatter(xyzAng,  xyzRad,  lw=0.5, c='red' )
 
 
 
@@ -400,15 +400,15 @@ for i in range(0, zetaMag.size ):
          zetaMag[i] = 8; 
 
 
-fig2 = plt.figure(2)
-ax2 = fig2.gca(projection='polar' )
+#fig3 = plt.figure(3)
+#ax2 = fig3.gca(projection='polar' )
 
 xyzRad = np.sqrt(xyzRand[:,0]**2 + xyzRand[:,1]**2 ); 
 xyzAng = np.arctan(xyzRand[:,1]/xyzRand[:,0] );
 
 #ax1 = plt.subplot(111, projection='polar')
-ax2.scatter(zetaPhase, zetaMag, lw=0.5, c='blue' )
-ax2.scatter(xyzAng,  xyzRad,    lw=0.5, c='red' )
+#ax2.scatter(zetaPhase, zetaMag, lw=0.5, c='blue' )
+#ax2.scatter(xyzAng,  xyzRad,    lw=0.5, c='red' )
 
 
 
