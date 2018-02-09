@@ -15,6 +15,9 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 from random import *
 
+import cmath as cm
+import math
+
 def data_gen(t=0):    # Generates a new data vector each time its called
     cnt = 0
     while cnt < 310:  # This sets the maximum number of points plotted
@@ -49,6 +52,34 @@ def sph2cart(azim, polar, r):
 # Vectorize these functions
 sph2cartvec = np.vectorize(sph2cart);
 cart2sphvec = np.vectorize(cart2sph);
+
+def rect(r, theta):
+    """theta in radians
+
+    returns tuple; (float, float); (x,y)
+    """
+    x = r * math.cos(theta)
+    y = r * math.sin(theta)
+    return x,y
+
+def polar(x, y):
+    """returns r, theta(radians)
+    """
+    r, theta = cm.polar( complex(x,y) );
+
+    return r, theta
+
+
+polarvec = np.vectorize(polar); # Vectorize these func's to operate on vectors
+rectvec  = np.vectorize(rect);
+
+ 
+
+def frange(start, stop, step):
+      i = start
+      while i < stop:
+          yield i
+          i += step
 
 def totuple(a):
     try:
@@ -305,6 +336,13 @@ xgrid = np.arange(-1.0,1.4,0.4); ygrid = xgrid;
 
 
 
+point1 = np.array([0,0,1/3])
+normal1 = np.array([0,0,1.0])
+
+xx1, yy1 = np.meshgrid(range(2),range(2))
+
+d1 = -np.sum(point1*normal1)
+z1 = (-normal1[0]*xx1 - normal1[1]*yy1 - d1)*1/normal1[2]
 
 
 
@@ -312,20 +350,28 @@ xgrid = np.arange(-1.0,1.4,0.4); ygrid = xgrid;
 fig1 = plt.figure(1)          # A static 3d plot
 ax = fig1.gca(projection='3d')
 for ii in range(2, polindex*3, 3):
-    ax.plot(xyz[:,ii-2], xyz[:,ii-1], xyz[:,ii], color=(0.0,0.0,0.0,0.5), linewidth=0.3)
+    ax.plot(xyz[:,ii-2], xyz[:,ii-1], xyz[:,ii], color=(0.0,0.0,0.0,0.5), 
+    linewidth=0.3)
 
 for ii in range(2, azimindex*3, 3):
-    ax.plot(xyzLon[:,ii-2], xyzLon[:,ii-1], xyzLon[:,ii], c=(0.0,0.0,0.0,0.5), linewidth=0.5)
+    ax.plot(xyzLon[:,ii-2], xyzLon[:,ii-1], xyzLon[:,ii], 
+    c=(0.0,0.0,0.0,0.5), linewidth=0.5)
 
-ax.scatter(xyzRand[:,0], xyzRand[:,1], xyzRand[:,2], s=12.2,  c=(0.2,0.2,0.8,0.8) )
+ax.scatter(xyzRand[:,0], xyzRand[:,1], xyzRand[:,2], s=1.2,  
+c=(0.2,0.2,0.8,0.8) )
 
 for ii in range(0, len(xgrid) ):
-    ax.plot( [ xgrid[ii] ] *len(ygrid), ygrid, [ 0 ] * len(ygrid), c=(0.8,0.0,0.0,0.5), linewidth=1.0)
+    ax.plot( [ xgrid[ii] ] *len(ygrid), ygrid, [ 0 ] * len(ygrid), 
+    c=(0.8,0.0,0.0,0.5), linewidth=1.0)
 
 for ii in range(0, len(ygrid) ):
-    ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), c=(0.8,0.0,0.0,0.5), linewidth=1.0)
+    ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), 
+    c=(0.8,0.0,0.0,0.5), linewidth=1.0)
 
-
+ax.plot_surface(xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
+ax.plot_surface(-xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
+ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
+ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
