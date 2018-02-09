@@ -368,6 +368,29 @@ for ii in range(0, len(ygrid) ):
     ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), 
     c=(0.8,0.0,0.0,0.5), linewidth=1.0)
 
+
+ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
+ax.set_zlim(zl, zh);
+
+
+fig2 = plt.figure(2)          # A static 3d plot
+ax = fig2.gca(projection='3d')
+for ii in range(2, polindex*3, 3):
+    ax.plot(xyz[:,ii-2], xyz[:,ii-1], xyz[:,ii], color=(0.0,0.0,0.0,0.5), 
+    linewidth=0.3)
+
+for ii in range(2, azimindex*3, 3):
+    ax.plot(xyzLon[:,ii-2], xyzLon[:,ii-1], xyzLon[:,ii], 
+    c=(0.0,0.0,0.0,0.5), linewidth=0.5)
+
+for ii in range(0, len(xgrid) ):
+    ax.plot( [ xgrid[ii] ] *len(ygrid), ygrid, [ 0 ] * len(ygrid), 
+    c=(0.8,0.0,0.0,0.5), linewidth=1.0)
+
+for ii in range(0, len(ygrid) ):
+    ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), 
+    c=(0.8,0.0,0.0,0.5), linewidth=1.0)
+
 ax.plot_surface(xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
