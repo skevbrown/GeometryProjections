@@ -372,6 +372,9 @@ for ii in range(0, len(ygrid) ):
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
 
+vecCenter = np.array([1/np.sqrt(3),1/np.sqrt(3),1/np.sqrt(3)])
+vecCorner1 = np.array([0,2/np.sqrt(3),2/np.sqrt(3)])
+vecCornxyz1 = vecCorner1 - vecCenter
 
 fig2 = plt.figure(2)          # A static 3d plot
 ax = fig2.gca(projection='3d')
@@ -395,6 +398,9 @@ ax.plot_surface(xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
+
+ax.scatter(vecCornxyz1[0],vecCornxyz1[1],vecCornxyz1[2],s=24.2,
+c=(0.9,0.1,0.1,1.0))
 
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
