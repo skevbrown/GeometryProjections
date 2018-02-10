@@ -113,9 +113,16 @@ lineStart = np.array(list(cubePoints[11])) - np.array(list(cubePoints[10]))
 magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
 print("Initial Diag length {}".format(magLS))
 
+# A: Rotate around X by +pi/4, Rotate around Y by -(1/5)*pi
+# B: Rotate around Y by -pi/4, Rotate around X by 1/5*pi
+# COEFF'S ARE SAME IN ROT MATRICES IN TERMS OF POSITIONS, BUT
+# THE SIGN OF SOME COEFF'S CHANGES
+
 v = [3, 5, 0]
-axis = [0,1,0]
+axis = [0,1,0] # Rotate around Y, by pi/4
 theta = -np.pi/4 
+
+print(rotation_matrix(axis,theta))
 
 for ii in range(0,len(cubePoints)):
     rowOut = np.dot(rotation_matrix(axis,theta), list(cubePoints[ii]))
@@ -126,14 +133,16 @@ check_orthog(0,1,3,cubeRot1)
 
     
 v = [3, 5, 0]
-axis = [1,0,0]
-theta = (0.2)*np.pi # Eigth/Fortieths ???
+axis = [1,0,0] # Rotate around X by pi/5
+theta = -(0.2)*np.pi # Eigth/Fortieths ???
+theta = 0.62168  # -0.62168
+
+print(rotation_matrix(axis,theta))
 
 for ii in range(0,len(cubeRot1)):
             #print(cubePoints[ii])
     rowOut = np.dot(rotation_matrix(axis,theta), list(cubeRot1[ii]))
-    cubeRot2[ii] = rowOut
-    print(rowOut ) 
+    cubeRot2[ii] = rowOut 
     
 check_orthog(0,1,3,cubeRot2)
 lineStart = np.array(list(cubeRot2[11])) - np.array(list(cubeRot2[10]))
