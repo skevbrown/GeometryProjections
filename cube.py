@@ -92,9 +92,12 @@ plt3d.plot_surface(xx,yy,z2,color=(0.8,0.1,0.3,0.5))
 plt3d.set_xlim(0,1.2); plt3d.set_ylim(0,1.2)
 plt3d.set_zlim(0,1.2)
 
-cubeMat = np.array([[-1,-1,-1],[-1,1,-1],[1,1,-1],[1,-1,-1],[-1,-1,-1],
-[-1,-1,1],[-1,1,1],[1,1,1],[1,-1,1],[-1,-1,1], # All the points
-[-1,-1,-1],[1,1,1]]) # The line
+
+bv = np.sin(np.pi/5) # Base value of matrix
+bv = 0.578 # Base value of matrix
+cubeMat = np.array([[-bv,-bv,-bv],[-bv,bv,-bv],[bv,bv,-bv],[bv,-bv,-bv],[-bv,-bv,-bv],
+[-bv,-bv,bv],[-bv,bv,bv],[bv,bv,bv],[bv,-bv,bv],[-bv,-bv,bv], # All the points
+[-bv,-bv,-bv],[bv,bv,bv]]) # The line
 
 cubePoints = np.zeros(len(cubeMat),dtype=[('xPnts',np.float64),
 ('yPnts',np.float64),('zPnts',np.float64)])
@@ -106,6 +109,9 @@ cubePoints['yPnts'] = cubeMat[:,1]
 cubePoints['zPnts'] = cubeMat[:,2]
 
 check_orthog(0,1,3,cubePoints)
+lineStart = np.array(list(cubePoints[11])) - np.array(list(cubePoints[10]))
+magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
+print("Initial Diag length {}".format(magLS))
 
 v = [3, 5, 0]
 axis = [0,1,0]
@@ -130,7 +136,9 @@ for ii in range(0,len(cubeRot1)):
     print(rowOut ) 
     
 check_orthog(0,1,3,cubeRot2)
-
+lineStart = np.array(list(cubeRot2[11])) - np.array(list(cubeRot2[10]))
+magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
+print("Final Diag length {}".format(magLS))
 
 cubePlot = np.copy(cubeRot2)
 

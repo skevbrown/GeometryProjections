@@ -53,6 +53,31 @@ def sph2cart(azim, polar, r):
 sph2cartvec = np.vectorize(sph2cart);
 cart2sphvec = np.vectorize(cart2sph);
 
+def rotation_matrix(axis, theta):
+    """
+    Return the rotation matrix associated with counterclockwise rotation about
+    the given axis by theta radians.
+    """
+    axis = np.asarray(axis)
+    axis = axis/math.sqrt(np.dot(axis, axis))
+    a = math.cos(theta/2.0)
+    b, c, d = -axis*math.sin(theta/2.0)
+    aa, bb, cc, dd = a*a, b*b, c*c, d*d
+    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
+    return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
+                     [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
+                     [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
+    
+def check_orthog(pos1,pos2,pos3,matrix):
+      mat = np.copy(matrix)
+      v1 = np.array(list(mat[pos2])) - np.array(list(mat[pos1]))
+      v2 = np.array(list(mat[pos3])) - np.array(list(mat[pos1]))
+      npdot = np.dot(v1,v2)
+      if npdot == 0:
+          print("Orthogonal {}".format(npdot))
+      else:
+          print("Not Orthogonal {}".format(npdot))
+
 def rect(r, theta):
     """theta in radians
 
@@ -335,8 +360,8 @@ xgrid = np.arange(-1.0,1.4,0.4); ygrid = xgrid;
 #ax2 = set_rmax(20)
 
 
-
-point1 = np.array([0,0,(1/6)*2*np.sqrt(3)])
+              # Could be 1/6 2 sqrt 3 or 1/3
+point1 = np.array([0,0,1/3])
 normal1 = np.array([0,0,1.0])
 
 xx1, yy1 = np.meshgrid(range(2),range(2))
@@ -372,6 +397,54 @@ for ii in range(0, len(ygrid) ):
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
 
+# Calc's to rotate the Cube
+bv = np.sin(np.pi/5) # Base value of matrix
+bv = 0.578 # Base value of matrix
+cubeMat = np.array([[-bv,-bv,-bv],[-bv,bv,-bv],[bv,bv,-bv],[bv,-bv,-bv],[-bv,-bv,-bv],
+[-bv,-bv,bv],[-bv,bv,bv],[bv,bv,bv],[bv,-bv,bv],[-bv,-bv,bv], # All the points
+[-bv,-bv,-bv],[bv,bv,bv]]) # The line
+
+cubePoints = np.zeros(len(cubeMat),dtype=[('xPnts',np.float64),
+('yPnts',np.float64),('zPnts',np.float64)])
+cubeRot1 = np.copy(cubePoints)
+cubeRot2 = np.copy(cubeRot1)
+
+cubePoints['xPnts'] = cubeMat[:,0]
+cubePoints['yPnts'] = cubeMat[:,1]
+cubePoints['zPnts'] = cubeMat[:,2]
+
+check_orthog(0,1,3,cubePoints)
+lineStart = np.array(list(cubePoints[11])) - np.array(list(cubePoints[10]))
+magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
+print("Initial Diag length {}".format(magLS))
+
+v = [3, 5, 0]
+axis = [0,1,0]
+theta = -np.pi/4 
+
+for ii in range(0,len(cubePoints)):
+    rowOut = np.dot(rotation_matrix(axis,theta), list(cubePoints[ii]))
+    cubeRot1[ii] = rowOut
+    print(rowOut ) 
+    
+check_orthog(0,1,3,cubeRot1)
+
+    
+v = [3, 5, 0]
+axis = [1,0,0]
+theta = (0.2)*np.pi # Eigth/Fortieths ???
+
+for ii in range(0,len(cubeRot1)):
+            #print(cubePoints[ii])
+    rowOut = np.dot(rotation_matrix(axis,theta), list(cubeRot1[ii]))
+    cubeRot2[ii] = rowOut
+    print(rowOut ) 
+    
+check_orthog(0,1,3,cubeRot2)
+lineStart = np.array(list(cubeRot2[11])) - np.array(list(cubeRot2[10]))
+magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
+print("Final Diag length {}".format(magLS))
+
 # Plane intersection points
 vecCenter =  np.array([1/np.sqrt(3),1/np.sqrt(3),1/np.sqrt(3)])
 vecCorner1 = np.array([0,2/np.sqrt(3),2/np.sqrt(3)])
@@ -383,6 +456,7 @@ vecCornxyz2 = vecCorner2 - vecCenter
 vecCorner3 = np.array([2/np.sqrt(3),2/np.sqrt(3),0])
 vecCornxyz3 = vecCorner3 - vecCenter
 vecCornxyz3 = vecCornxyz3 * [-1,-1,-1]
+
 
 fig2 = plt.figure(2)          # A static 3d plot
 ax = fig2.gca(projection='3d')
@@ -409,12 +483,24 @@ ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 
 # Scatter points
-ax.scatter(vecCornxyz1[0],vecCornxyz1[1],vecCornxyz1[2],s=24.2,
-c=(0.9,0.1,0.1,1.0))
-ax.scatter(vecCornxyz2[0],vecCornxyz2[1],vecCornxyz2[2],s=24.2,
-c=(0.9,0.1,0.1,1.0))
-ax.scatter(vecCornxyz3[0],vecCornxyz3[1],vecCornxyz3[2],s=24.2,
-c=(0.9,0.1,0.1,1.0))
+#ax.scatter(vecCornxyz1[0],vecCornxyz1[1],vecCornxyz1[2],s=24.2,
+#c=(0.9,0.1,0.1,1.0))
+#ax.scatter(vecCornxyz2[0],vecCornxyz2[1],vecCornxyz2[2],s=24.2,
+#c=(0.9,0.1,0.1,1.0))
+#ax.scatter(vecCornxyz3[0],vecCornxyz3[1],vecCornxyz3[2],s=24.2,
+#c=(0.9,0.1,0.1,1.0))
+
+# Plot the rotated cube
+cubePlot = np.copy(cubeRot2)
+
+ax.scatter(cubePlot['xPnts'][0:9],cubePlot['yPnts'][0:9],
+cubePlot['zPnts'][0:9],color='blue',s=24.2)
+#ax.plot(cubePlot['xPnts'][0:5],cubePlot['yPnts'][0:5],
+#cubePlot['zPnts'][0:5],label='Cube',color='blue',linewidth=0.7)
+#ax.plot(cubePlot['xPnts'][5:10],cubePlot['yPnts'][5:10],
+#cubePlot['zPnts'][5:10],label='Cube',color='blue',linewidth=0.7)
+ax.plot(cubePlot['xPnts'][10:12],cubePlot['yPnts'][10:12],
+cubePlot['zPnts'][10:12],color='red',linewidth=1.5)
 
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
