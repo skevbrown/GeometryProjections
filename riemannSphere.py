@@ -77,6 +77,13 @@ def check_orthog(pos1,pos2,pos3,matrix):
           print("Orthogonal {}".format(npdot))
       else:
           print("Not Orthogonal {}".format(npdot))
+          
+def mag3D(vector3):
+    x = vector3[0]
+    y = vector3[1]
+    z = vector3[2]
+    mag = np.sqrt(x**2 + y**2 + z**2)
+    return mag
 
 def rect(r, theta):
     """theta in radians
@@ -415,7 +422,7 @@ cubePoints['zPnts'] = cubeMat[:,2]
 
 check_orthog(0,1,3,cubePoints)
 lineStart = np.array(list(cubePoints[11])) - np.array(list(cubePoints[10]))
-magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
+magLS = mag3D(lineStart)
 print("Initial Diag length {}".format(magLS))
 
 v = [3, 5, 0]
@@ -435,15 +442,17 @@ axis = [1,0,0]
 theta = (0.2)*np.pi # Eigth/Fortieths ???
 
 for ii in range(0,len(cubeRot1)):
-            #print(cubePoints[ii])
     rowOut = np.dot(rotation_matrix(axis,theta), list(cubeRot1[ii]))
     cubeRot2[ii] = rowOut
-    print(rowOut ) 
     
 check_orthog(0,1,3,cubeRot2)
 lineStart = np.array(list(cubeRot2[11])) - np.array(list(cubeRot2[10]))
-magLS = np.sqrt(lineStart[0]**2+lineStart[1]**2+lineStart[2]**2)
+magLS = mag3D(lineStart)
 print("Final Diag length {}".format(magLS))
+
+for row in range(0,len(cubeRot2)):
+    magLS = mag3D(np.array(list(cubeRot2[row])))
+    print("Mag of point {} {}".format(row,magLS))
 
 # Plane intersection points
 vecCenter =  np.array([1/np.sqrt(3),1/np.sqrt(3),1/np.sqrt(3)])
@@ -476,11 +485,16 @@ for ii in range(0, len(ygrid) ):
     ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), 
     c=(0.8,0.0,0.0,0.5), linewidth=1.0)
 
-# Four surface to make One plane
+# Four surface to make One plane: Upper plane
 ax.plot_surface(xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
+# Lower plane
+ax.plot_surface(xx1,yy1,-z1,color=(0.9,0.1,0.2,0.3))
+ax.plot_surface(-xx1,yy1,-z1,color=(0.9,0.1,0.2,0.3))
+ax.plot_surface(xx1,-yy1,-z1,color=(0.9,0.1,0.2,0.3))
+ax.plot_surface(-xx1,-yy1,-z1,color=(0.9,0.1,0.2,0.3))
 
 # Scatter points
 #ax.scatter(vecCornxyz1[0],vecCornxyz1[1],vecCornxyz1[2],s=24.2,
@@ -494,7 +508,7 @@ ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 cubePlot = np.copy(cubeRot2)
 
 ax.scatter(cubePlot['xPnts'][0:9],cubePlot['yPnts'][0:9],
-cubePlot['zPnts'][0:9],color='blue',s=24.2)
+cubePlot['zPnts'][0:9],color='blue',s=54.2)
 #ax.plot(cubePlot['xPnts'][0:5],cubePlot['yPnts'][0:5],
 #cubePlot['zPnts'][0:5],label='Cube',color='blue',linewidth=0.7)
 #ax.plot(cubePlot['xPnts'][5:10],cubePlot['yPnts'][5:10],
