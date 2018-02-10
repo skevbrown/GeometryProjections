@@ -452,7 +452,9 @@ print("Final Diag length {}".format(magLS))
 
 for row in range(0,len(cubeRot2)):
     magLS = mag3D(np.array(list(cubeRot2[row])))
+    #sphCoor = cart2sph(np.array(list(cubeRot2[row])))
     print("Mag of point {} {}".format(row,magLS))
+    #print("Sph {} {} {}".format(sphCoor[0],sphCoor[1]),sphCoor[2])
 
 # Plane intersection points
 vecCenter =  np.array([1/np.sqrt(3),1/np.sqrt(3),1/np.sqrt(3)])
