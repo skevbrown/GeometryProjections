@@ -3,6 +3,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #import PyQt5
+import math
+import itertools
+
+def rotation_matrix(axis, theta):
+    """
+    Return the rotation matrix associated with counterclockwise rotation about
+    the given axis by theta radians.
+    """
+    axis = np.asarray(axis)
+    axis = axis/math.sqrt(np.dot(axis, axis))
+    a = math.cos(theta/2.0)
+    b, c, d = -axis*math.sin(theta/2.0)
+    aa, bb, cc, dd = a*a, b*b, c*c, d*d
+    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
+    return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
+                     [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
+                     [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
+    
+def check_orthog(pos1,pos2,pos3,matrix):
+      mat = np.copy(matrix)
+      v1 = np.array(list(mat[pos2])) - np.array(list(mat[pos1]))
+      v2 = np.array(list(mat[pos3])) - np.array(list(mat[pos1]))
+      npdot = np.dot(v1,v2)
+      if npdot == 0:
+          print("Orthogonal {}".format(npdot))
+      else:
+          print("Not Orthogonal {}".format(npdot))
+
 
 cubeMat = np.array([[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,1,1],[0,0,1],
 [1,0,1],[1,1,1],[0,1,1], [0,0,0],[0,0,1], [1,0,0],[1,0,1],
@@ -59,11 +87,75 @@ z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1/normal1[2]
 d2 = -np.sum(point2*normal2) # Dot product
 z2 = (-normal2[0]*xx - normal2[1]*yy - d2)*1/normal2[2]
 
-
-
 plt3d.plot_surface(xx,yy,z1,color=(0.3,0.1,0.8,0.5))
 plt3d.plot_surface(xx,yy,z2,color=(0.8,0.1,0.3,0.5))
 plt3d.set_xlim(0,1.2); plt3d.set_ylim(0,1.2)
 plt3d.set_zlim(0,1.2)
+
+cubeMat = np.array([[-1,-1,-1],[-1,1,-1],[1,1,-1],[1,-1,-1],[-1,-1,-1],
+[-1,-1,1],[-1,1,1],[1,1,1],[1,-1,1],[-1,-1,1], # All the points
+[-1,-1,-1],[1,1,1]]) # The line
+
+cubePoints = np.zeros(len(cubeMat),dtype=[('xPnts',np.float64),
+('yPnts',np.float64),('zPnts',np.float64)])
+cubeRot1 = np.copy(cubePoints)
+cubeRot2 = np.copy(cubeRot1)
+
+cubePoints['xPnts'] = cubeMat[:,0]
+cubePoints['yPnts'] = cubeMat[:,1]
+cubePoints['zPnts'] = cubeMat[:,2]
+
+check_orthog(0,1,3,cubePoints)
+
+v = [3, 5, 0]
+axis = [0,1,0]
+theta = -np.pi/4 
+
+for ii in range(0,len(cubePoints)):
+    rowOut = np.dot(rotation_matrix(axis,theta), list(cubePoints[ii]))
+    cubeRot1[ii] = rowOut
+    print(rowOut ) 
+    
+check_orthog(0,1,3,cubeRot1)
+
+    
+v = [3, 5, 0]
+axis = [1,0,0]
+theta = (0.2)*np.pi # Eigth/Fortieths ???
+
+for ii in range(0,len(cubeRot1)):
+            #print(cubePoints[ii])
+    rowOut = np.dot(rotation_matrix(axis,theta), list(cubeRot1[ii]))
+    cubeRot2[ii] = rowOut
+    print(rowOut ) 
+    
+check_orthog(0,1,3,cubeRot2)
+
+
+cubePlot = np.copy(cubeRot2)
+
+plt3d = plt.figure().gca(projection='3d')
+
+plt3d.scatter(cubePoints['xPnts'][0:9],cubePoints['yPnts'][0:9],
+cubePoints['zPnts'][0:9],color='red')
+plt3d.plot(cubePoints['xPnts'][0:5],cubePoints['yPnts'][0:5],
+cubePoints['zPnts'][0:5],label='Cube',color='blue',linewidth=0.7)
+plt3d.plot(cubePoints['xPnts'][5:10],cubePoints['yPnts'][5:10],
+cubePoints['zPnts'][5:10],label='Cube',color='blue',linewidth=0.7)
+plt3d.plot(cubePoints['xPnts'][10:12],cubePoints['yPnts'][10:12],
+cubePoints['zPnts'][10:12],color='red',linewidth=1.5)
+
+
+plt3dRot = plt.figure().gca(projection='3d')
+
+plt3dRot.scatter(cubePlot['xPnts'][0:9],cubePlot['yPnts'][0:9],
+cubePlot['zPnts'][0:9],color='red')
+plt3dRot.plot(cubePlot['xPnts'][0:5],cubePlot['yPnts'][0:5],
+cubePlot['zPnts'][0:5],label='Cube',color='blue',linewidth=0.7)
+plt3dRot.plot(cubePlot['xPnts'][5:10],cubePlot['yPnts'][5:10],
+cubePlot['zPnts'][5:10],label='Cube',color='blue',linewidth=0.7)
+plt3dRot.plot(cubePlot['xPnts'][10:12],cubePlot['yPnts'][10:12],
+cubePlot['zPnts'][10:12],color='red',linewidth=1.5)
+
 
 plt.show()

@@ -336,7 +336,7 @@ xgrid = np.arange(-1.0,1.4,0.4); ygrid = xgrid;
 
 
 
-point1 = np.array([0,0,1/3])
+point1 = np.array([0,0,(1/6)*2*np.sqrt(3)])
 normal1 = np.array([0,0,1.0])
 
 xx1, yy1 = np.meshgrid(range(2),range(2))
@@ -372,9 +372,17 @@ for ii in range(0, len(ygrid) ):
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
 
-vecCenter = np.array([1/np.sqrt(3),1/np.sqrt(3),1/np.sqrt(3)])
+# Plane intersection points
+vecCenter =  np.array([1/np.sqrt(3),1/np.sqrt(3),1/np.sqrt(3)])
 vecCorner1 = np.array([0,2/np.sqrt(3),2/np.sqrt(3)])
 vecCornxyz1 = vecCorner1 - vecCenter
+
+vecCorner2 = np.array([2/np.sqrt(3),0,2/np.sqrt(3)])
+vecCornxyz2 = vecCorner2 - vecCenter
+
+vecCorner3 = np.array([2/np.sqrt(3),2/np.sqrt(3),0])
+vecCornxyz3 = vecCorner3 - vecCenter
+vecCornxyz3 = vecCornxyz3 * [-1,-1,-1]
 
 fig2 = plt.figure(2)          # A static 3d plot
 ax = fig2.gca(projection='3d')
@@ -394,12 +402,18 @@ for ii in range(0, len(ygrid) ):
     ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), 
     c=(0.8,0.0,0.0,0.5), linewidth=1.0)
 
+# Four surface to make One plane
 ax.plot_surface(xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
 
+# Scatter points
 ax.scatter(vecCornxyz1[0],vecCornxyz1[1],vecCornxyz1[2],s=24.2,
+c=(0.9,0.1,0.1,1.0))
+ax.scatter(vecCornxyz2[0],vecCornxyz2[1],vecCornxyz2[2],s=24.2,
+c=(0.9,0.1,0.1,1.0))
+ax.scatter(vecCornxyz3[0],vecCornxyz3[1],vecCornxyz3[2],s=24.2,
 c=(0.9,0.1,0.1,1.0))
 
 ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
