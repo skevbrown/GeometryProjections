@@ -31,6 +31,24 @@ def check_orthog(pos1,pos2,pos3,matrix):
       else:
           print("Not Orthogonal {}".format(npdot))
 
+def cart2sph(x, y, z):
+    hxy = np.hypot(x, y)
+    r = np.hypot(hxy, z)
+    el = np.arctan2(z, hxy)
+    az = np.arctan2(y, x)
+    return az, el, r
+
+
+def sph2cart(azim, polar, r):
+    rcos_theta = r * np.cos(polar)
+    x = rcos_theta * np.cos(azim)
+    y = rcos_theta * np.sin(azim)
+    z = r * np.sin(polar)
+    return x, y, z
+
+# Vectorize these functions
+sph2cartvec = np.vectorize(sph2cart);
+cart2sphvec = np.vectorize(cart2sph);
 
 cubeMat = np.array([[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,1,1],[0,0,1],
 [1,0,1],[1,1,1],[0,1,1], [0,0,0],[0,0,1], [1,0,0],[1,0,1],
@@ -93,8 +111,8 @@ plt3d.set_xlim(0,1.2); plt3d.set_ylim(0,1.2)
 plt3d.set_zlim(0,1.2)
 
 
-bv = np.sin(np.pi/5) # Base value of matrix
-bv = 0.578 # Base value of matrix
+
+bv = 1/np.sqrt(3) # Base value of matrix, Gives Diag of 2.0
 cubeMat = np.array([[-bv,-bv,-bv],[-bv,bv,-bv],[bv,bv,-bv],[bv,-bv,-bv],[-bv,-bv,-bv],
 [-bv,-bv,bv],[-bv,bv,bv],[bv,bv,bv],[bv,-bv,bv],[-bv,-bv,bv], # All the points
 [-bv,-bv,-bv],[bv,bv,bv]]) # The line
@@ -134,7 +152,7 @@ check_orthog(0,1,3,cubeRot1)
     
 v = [3, 5, 0]
 axis = [1,0,0] # Rotate around X by pi/5
-theta = -(0.2)*np.pi # Eigth/Fortieths ???
+#theta = 1/np.sqrt(3) # Eigth/Fortieths ???
 theta = 0.62168  # -0.62168
 
 print(rotation_matrix(axis,theta))
@@ -151,6 +169,7 @@ print("Final Diag length {}".format(magLS))
 
 cubePlot = np.copy(cubeRot2)
 
+# Non Rotated Cube
 plt3d = plt.figure().gca(projection='3d')
 
 plt3d.scatter(cubePoints['xPnts'][0:9],cubePoints['yPnts'][0:9],
@@ -162,7 +181,7 @@ cubePoints['zPnts'][5:10],label='Cube',color='blue',linewidth=0.7)
 plt3d.plot(cubePoints['xPnts'][10:12],cubePoints['yPnts'][10:12],
 cubePoints['zPnts'][10:12],color='red',linewidth=1.5)
 
-
+# Rotated Cube
 plt3dRot = plt.figure().gca(projection='3d')
 
 plt3dRot.scatter(cubePlot['xPnts'][0:9],cubePlot['yPnts'][0:9],
@@ -174,5 +193,81 @@ cubePlot['zPnts'][5:10],label='Cube',color='blue',linewidth=0.7)
 plt3dRot.plot(cubePlot['xPnts'][10:12],cubePlot['yPnts'][10:12],
 cubePlot['zPnts'][10:12],color='red',linewidth=1.5)
 
+
+# Rotated cube Drawn
+# Specify rotated cube in spherical, put in Structure, Convert and put in XYZ 
+# structured
+trAngle = 1 - np.arcsin(1/np.sqrt(3))
+cubedrawMat = np.array([[0,np.pi/2,1.0],[0,-np.pi/2,1.0], # Top bottom
+[-np.pi/3,-trAngle,1.0],[np.pi/3,trAngle,1.0],[np.pi/2,-trAngle,1.0],
+[0,0,1.0],[0,0,1.0],[0,0,1.0]])  # Upper triang
+    
+circleAz = np.arange(-np.pi,np.pi,2*np.pi/100)
+circlePolar = np.array( [ 0.0] * len(circleAz))
+circleRad = np.array( [1.0]*len(circleAz) )
+
+circleStruct = np.zeros(len(circleAz),dtype=[('xPnts','f8'),('yPnts','f8'),
+('zPnts','f8')])
+
+for row in range(0,len(circleStruct)):
+    xpnt, ypnt, zpnt = sph2cart(circleAz[row],circlePolar[row],circleRad[row])
+    circleStruct['xPnts'][row] = xpnt
+    circleStruct['yPnts'][row] = ypnt
+    circleStruct['zPnts'][row] = zpnt
+
+
+cubeDrawnSp = np.zeros(len(cubedrawMat),dtype=[('azim','f8'),('polar','f8'),('radius','f8')])
+cubeDrawn = np.zeros(len(cubedrawMat),dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+
+cubeDrawnSp['azim'] = cubedrawMat[:,0]
+cubeDrawnSp['polar'] = cubedrawMat[:,1]
+cubeDrawnSp['radius'] = cubedrawMat[:,2]
+
+for row in range(0,len(cubeDrawnSp)):
+    azim = cubeDrawnSp['azim'][row]
+    polar = cubeDrawnSp['polar'][row]
+    radius = cubeDrawnSp['radius'][row]
+    xpnt, ypnt, zpnt = sph2cart(azim,polar,radius)
+    cubeDrawn['xPnts'][row] = xpnt
+    cubeDrawn['yPnts'][row] = ypnt
+    cubeDrawn['zPnts'][row] = zpnt
+
+
+mainAxis = np.array( [np.array(list(cubeDrawn[0])),
+np.array(list(cubeDrawn[1]))]) 
+    
+point1 = np.array([0,0,0])
+normal1 = np.array([0,0,1])
+
+xx, yy = np.meshgrid(range(2),range(2))
+
+d1 = -np.sum(point1*normal1) # Dot product
+z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1/normal1[2]
+
+# Plot Drawn(rotated) Cube
+plt3dRaw = plt.figure().gca(projection='3d')
+
+plt3dRaw.scatter(cubeDrawn['xPnts'],cubeDrawn['yPnts'],
+cubeDrawn['zPnts'],color='red',s=54.2)
+plt3dRaw.plot(mainAxis[:,0],mainAxis[:,1],mainAxis[:,2],color='blue',
+linewidth=1.5)
+plt3dRaw.plot(circleStruct['xPnts'],circleStruct['yPnts'],
+circleStruct['zPnts'],color='blue',linewidth=0.7)
+
+for row in range(0,len(cubeDrawn)-1):
+    lineVec1 = np.array(list(cubeDrawn[row]))
+    lineVec2 = np.array(list(cubeDrawn[row+1]))
+    lineMat = np.array([lineVec1,lineVec2])
+    #print(lineMat)
+    plt3dRaw.plot(lineMat[:,0],lineMat[:,1],lineMat[:,2],
+    color='blue',linewidth=0.7)
+
+# Four surface to make One plane: Upper plane
+plt3dRaw.plot_surface(xx,yy,z1,color=(0.2,0.1,0.9,0.3))
+plt3dRaw.plot_surface(-xx,yy,z1,color=(0.2,0.1,0.9,0.3))
+plt3dRaw.plot_surface(xx,-yy,z1,color=(0.2,0.1,0.9,0.3))
+plt3dRaw.plot_surface(-xx,-yy,z1,color=(0.2,0.1,0.9,0.3))
+#plt3d.set_xlim(-2,2); plt3d.set_ylim(-2,2)
+#plt3d.set_zlim(0,1.2)
 
 plt.show()

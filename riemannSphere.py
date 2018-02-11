@@ -405,8 +405,7 @@ ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
 ax.set_zlim(zl, zh);
 
 # Calc's to rotate the Cube
-bv = np.sin(np.pi/5) # Base value of matrix
-bv = 0.578 # Base value of matrix
+bv = 1/np.sqrt(3) # Base value of matrix, gives Diag of 2.0
 cubeMat = np.array([[-bv,-bv,-bv],[-bv,bv,-bv],[bv,bv,-bv],[bv,-bv,-bv],[-bv,-bv,-bv],
 [-bv,-bv,bv],[-bv,bv,bv],[bv,bv,bv],[bv,-bv,bv],[-bv,-bv,bv], # All the points
 [-bv,-bv,-bv],[bv,bv,bv]]) # The line
@@ -452,8 +451,10 @@ print("Final Diag length {}".format(magLS))
 
 for row in range(0,len(cubeRot2)):
     magLS = mag3D(np.array(list(cubeRot2[row])))
-    #sphCoor = cart2sph(np.array(list(cubeRot2[row])))
+    cartX, cartY, cartZ = np.array(list(cubeRot2[row]))
+    spAzi, spPol, spRad = cart2sph(cartX,cartY,cartZ)
     print("Mag of point {} {}".format(row,magLS))
+    print("Azim, Polar, Rad: {} {} {}".format(spAzi,spPol,spRad))
     #print("Sph {} {} {}".format(sphCoor[0],sphCoor[1]),sphCoor[2])
 
 # Plane intersection points
