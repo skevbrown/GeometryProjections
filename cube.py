@@ -199,8 +199,8 @@ cubePlot['zPnts'][10:12],color='red',linewidth=1.5)
 # structured
 trAngle = 1 - np.arcsin(1/np.sqrt(3))
 cubedrawMat = np.array([[0,np.pi/2,1.0],[0,-np.pi/2,1.0], # Top bottom
-[-np.pi/3,-trAngle,1.0],[np.pi/3,trAngle,1.0],[np.pi/2,-trAngle,1.0],
-[0,0,1.0],[0,0,1.0],[0,0,1.0]])  # Upper triang
+[-(1/6)*np.pi,-trAngle,1.0],[(1/6)*np.pi,trAngle,1.0],[np.pi/2,-trAngle,1.0],
+[(5/6)*np.pi,trAngle,1.0],[0-(5/6)*np.pi,-trAngle,1.0],[-(np.pi/2),trAngle,1.0]])  # Upper triang
     
 circleAz = np.arange(-np.pi,np.pi,2*np.pi/100)
 circlePolar = np.array( [ 0.0] * len(circleAz))
