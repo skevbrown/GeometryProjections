@@ -200,8 +200,9 @@ cubePlot['zPnts'][10:12],color='red',linewidth=1.5)
 trAngle = 1 - np.arcsin(1/np.sqrt(3))
 cubedrawMat = np.array([[0,np.pi/2,1.0],[0,-np.pi/2,1.0], # Top bottom
 [-(1/6)*np.pi,-trAngle,1.0],[(1/6)*np.pi,trAngle,1.0],[np.pi/2,-trAngle,1.0],
-[(5/6)*np.pi,trAngle,1.0],[0-(5/6)*np.pi,-trAngle,1.0],[-(np.pi/2),trAngle,1.0]])  # Upper triang
-    
+[(5/6)*np.pi,trAngle,1.0],[-(5/6)*np.pi,-trAngle,1.0],[-(np.pi/2),trAngle,1.0]])  # Upper triang
+
+# Setup a circle at Z=0
 circleAz = np.arange(-np.pi,np.pi,2*np.pi/100)
 circlePolar = np.array( [ 0.0] * len(circleAz))
 circleRad = np.array( [1.0]*len(circleAz) )
@@ -233,9 +234,9 @@ for row in range(0,len(cubeDrawnSp)):
     cubeDrawn['zPnts'][row] = zpnt
 
 
-mainAxis = np.array( [np.array(list(cubeDrawn[0])),
-np.array(list(cubeDrawn[1]))]) 
-    
+ 
+
+# Setup a plane for plot
 point1 = np.array([0,0,0])
 normal1 = np.array([0,0,1])
 
@@ -244,13 +245,31 @@ xx, yy = np.meshgrid(range(2),range(2))
 d1 = -np.sum(point1*normal1) # Dot product
 z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1/normal1[2]
 
+# Individual lines to add to plot
+mainAxis = np.array( [np.array(list(cubeDrawn[0])),
+np.array(list(cubeDrawn[1]))])
+
+line1_4 = np.array( [np.array(list(cubeDrawn[1])),
+np.array(list(cubeDrawn[4]))])
+line0_7 = np.array( [np.array(list(cubeDrawn[0])),
+np.array(list(cubeDrawn[7]))])
+line0_5 = np.array( [np.array(list(cubeDrawn[0])),
+np.array(list(cubeDrawn[5]))])
+    
+lines = np.concatenate((line0_7,line1_4),axis=0)    
+#lines = np.concatenate((lines,line0_5),axis=0)
+    
 # Plot Drawn(rotated) Cube
 plt3dRaw = plt.figure().gca(projection='3d')
 
 plt3dRaw.scatter(cubeDrawn['xPnts'],cubeDrawn['yPnts'],
 cubeDrawn['zPnts'],color='red',s=54.2)
-plt3dRaw.plot(mainAxis[:,0],mainAxis[:,1],mainAxis[:,2],color='blue',
+plt3dRaw.plot(mainAxis[:,0],mainAxis[:,1],mainAxis[:,2],color='red',
 linewidth=1.5)
+#plt3dRaw.plot(lines[:,0],lines[:,1],lines[:,2],color='blue',
+#linewidth=0.7)
+#plt3dRaw.plot(line0_5[:,0],line0_5[:,1],line0_5[:,2],color='blue',
+#linewidth=0.7)
 plt3dRaw.plot(circleStruct['xPnts'],circleStruct['yPnts'],
 circleStruct['zPnts'],color='blue',linewidth=0.7)
 
