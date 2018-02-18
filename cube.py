@@ -306,7 +306,7 @@ circleMat['xPnts'] = xConv; circleMat['yPnts'] = yConv;
 circleMat['zPnts'] = zConv
 
 #lineMat2 = np.zeros([4])
-lineMat2 = np.zeros(12,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+lineMat2 = np.zeros(42,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
 
 # Four surface to make One plane: Upper plane
 plt3dTriang.plot_surface(xx,yy,z1,  color=(0.2,0.1,0.9,0.2))
@@ -322,35 +322,113 @@ lineMat2[1] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
 plt3dTriang.plot(lineMat2['xPnts'][0:2],lineMat2['yPnts'][0:2],
 lineMat2['zPnts'][0:2],color='blue',linewidth=1.5)
 
-lineMat2[2] = np.array([0,0,0])
-lineMat2[3] = np.array([np.cos(np.pi/3)*twoSq2/3,0,0])
+lineMat2[2] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
+lineMat2[3] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,1/3])
 plt3dTriang.plot(lineMat2['xPnts'][2:4],lineMat2['yPnts'][2:4],
-lineMat2['zPnts'][2:4],color='red',linewidth=1.5)
+lineMat2['zPnts'][2:4],color='blue',linewidth=1.5)
 
 lineMat2[4] = np.array([0,0,0])
 lineMat2[5] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,1/3])
 plt3dTriang.plot(lineMat2['xPnts'][4:6],lineMat2['yPnts'][4:6],
 lineMat2['zPnts'][4:6],color='blue',linewidth=1.5)
 
+
 lineMat2[6] = np.array([0,0,-1/2])
 lineMat2[7] = np.array([0,0,1/2])
 plt3dTriang.plot(lineMat2['xPnts'][6:8],lineMat2['yPnts'][6:8],
 lineMat2['zPnts'][6:8],color='black',linewidth=1.5)
 
-lineMat2[8] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
-lineMat2[9] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,1/3])
+lineMat2[8] = np.array([0,0,0])
+lineMat2[9] = np.array([np.cos(np.pi/3)*twoSq2/3,0,0])
 plt3dTriang.plot(lineMat2['xPnts'][8:10],lineMat2['yPnts'][8:10],
-lineMat2['zPnts'][8:10],color='blue',linewidth=1.5)
+lineMat2['zPnts'][8:10],color='red',linewidth=1.5)
 
 lineMat2[10] = np.array([np.cos(np.pi/3)*twoSq2/3,0,0])
 lineMat2[11] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
 plt3dTriang.plot(lineMat2['xPnts'][10:12],lineMat2['yPnts'][10:12],
 lineMat2['zPnts'][10:12],color='red',linewidth=1.5)
 
+piAngle = np.pi # BLUE TWO
+lineMat2[12] = np.array([0,0,0])
+lineMat2[13] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][12:14],lineMat2['yPnts'][12:14],
+lineMat2['zPnts'][12:14],color='blue',linewidth=1.5)
 
+lineMat2[14] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+lineMat2[15] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,1/3])
+plt3dTriang.plot(lineMat2['xPnts'][14:16],lineMat2['yPnts'][14:16],
+lineMat2['zPnts'][14:16],color='blue',linewidth=1.5)
+
+lineMat2[16] = np.array([0,0,0])
+lineMat2[17] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,1/3])
+plt3dTriang.plot(lineMat2['xPnts'][16:18],lineMat2['yPnts'][16:18],
+lineMat2['zPnts'][16:18],color='blue',linewidth=1.5)
+
+npi3Angle = -np.pi/3 # BLUE THREE
+lineMat2[18] = np.array([0,0,0])
+lineMat2[19] = np.array([np.cos(npi3Angle)*twoSq2/3,np.sin(npi3Angle)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][18:20],lineMat2['yPnts'][18:20],
+lineMat2['zPnts'][18:20],color='blue',linewidth=1.5)
+
+lineMat2[20] = np.array([np.cos(npi3Angle)*twoSq2/3,np.sin(npi3Angle)*twoSq2/3,0])
+lineMat2[21] = np.array([np.cos(npi3Angle)*twoSq2/3,np.sin(npi3Angle)*twoSq2/3,1/3])
+plt3dTriang.plot(lineMat2['xPnts'][20:22],lineMat2['yPnts'][20:22],
+lineMat2['zPnts'][14:16],color='blue',linewidth=1.5)
+
+lineMat2[22] = np.array([0,0,0])
+lineMat2[23] = np.array([np.cos(npi3Angle)*twoSq2/3,np.sin(npi3Angle)*twoSq2/3,1/3])
+plt3dTriang.plot(lineMat2['xPnts'][22:24],lineMat2['yPnts'][22:24],
+lineMat2['zPnts'][22:24],color='blue',linewidth=1.5)
 plt3dTriang.scatter(circleMat['xPnts'],circleMat['yPnts'],circleMat['zPnts'],
 color='blue',s=0.5)
 
+piAngle = 0 # RED ONE
+lineMat2[24] = np.array([0,0,0])
+lineMat2[25] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][24:26],lineMat2['yPnts'][24:26],
+lineMat2['zPnts'][24:26],color='RED',linewidth=1.5)
+
+lineMat2[26] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+lineMat2[27] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,-1/3])
+plt3dTriang.plot(lineMat2['xPnts'][26:28],lineMat2['yPnts'][26:28],
+lineMat2['zPnts'][26:28],color='RED',linewidth=1.5)
+
+lineMat2[28] = np.array([0,0,0])
+lineMat2[29] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,-1/3])
+plt3dTriang.plot(lineMat2['xPnts'][28:30],lineMat2['yPnts'][28:30],
+lineMat2['zPnts'][28:30],color='RED',linewidth=1.5)
+
+piAngle = np.pi*2/3 # RED TWO
+lineMat2[30] = np.array([0,0,0])
+lineMat2[31] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][30:32],lineMat2['yPnts'][30:32],
+lineMat2['zPnts'][30:32],color='RED',linewidth=1.5)
+
+lineMat2[32] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+lineMat2[33] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,-1/3])
+plt3dTriang.plot(lineMat2['xPnts'][32:34],lineMat2['yPnts'][32:34],
+lineMat2['zPnts'][32:34],color='RED',linewidth=1.5)
+
+lineMat2[34] = np.array([0,0,0])
+lineMat2[35] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,-1/3])
+plt3dTriang.plot(lineMat2['xPnts'][34:36],lineMat2['yPnts'][34:36],
+lineMat2['zPnts'][34:36],color='RED',linewidth=1.5)
+
+piAngle = -np.pi*2/3 # RED TWO
+lineMat2[36] = np.array([0,0,0])
+lineMat2[37] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][36:38],lineMat2['yPnts'][36:38],
+lineMat2['zPnts'][36:38],color='RED',linewidth=1.5)
+
+lineMat2[38] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,0])
+lineMat2[39] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,-1/3])
+plt3dTriang.plot(lineMat2['xPnts'][38:40],lineMat2['yPnts'][38:40],
+lineMat2['zPnts'][38:40],color='RED',linewidth=1.5)
+
+lineMat2[40] = np.array([0,0,0])
+lineMat2[41] = np.array([np.cos(piAngle)*twoSq2/3,np.sin(piAngle)*twoSq2/3,-1/3])
+plt3dTriang.plot(lineMat2['xPnts'][40:42],lineMat2['yPnts'][40:42],
+lineMat2['zPnts'][40:42],color='RED',linewidth=1.5)
 
 plt.show()
 
