@@ -65,7 +65,7 @@ cubePoints['zPnts'] = cubeMat[:,2]
 
 
 # plot the surface
-plt3d = plt.figure().gca(projection='3d')
+plt3d = plt.figure(1).gca(projection='3d')
 #plt3d.plot_surface(xx,yy,z1, color=(0.5,0.1,0.9,0.5))
 #plt3d.set_xlim(0,1.2); plt3d.set_ylim(0,1.2)
 plt3d.plot(cubePoints['xPnts'][0:9],cubePoints['yPnts'][0:9],
@@ -112,7 +112,7 @@ plt3d.set_zlim(0,1.2)
 
 
 
-bv = 1/np.sqrt(3) # Base value of matrix, Gives Diag of 2.0
+bv = 1/np.sqrt(3)# Base value of matrix, Gives Diag of 2.0
 cubeMat = np.array([[-bv,-bv,-bv],[-bv,bv,-bv],[bv,bv,-bv],[bv,-bv,-bv],[-bv,-bv,-bv],
 [-bv,-bv,bv],[-bv,bv,bv],[bv,bv,bv],[bv,-bv,bv],[-bv,-bv,bv], # All the points
 [-bv,-bv,-bv],[bv,bv,bv]]) # The line
@@ -170,7 +170,7 @@ print("Final Diag length {}".format(magLS))
 cubePlot = np.copy(cubeRot2)
 
 # Non Rotated Cube
-plt3d = plt.figure().gca(projection='3d')
+plt3d = plt.figure(2).gca(projection='3d')
 
 plt3d.scatter(cubePoints['xPnts'][0:9],cubePoints['yPnts'][0:9],
 cubePoints['zPnts'][0:9],color='red')
@@ -182,7 +182,7 @@ plt3d.plot(cubePoints['xPnts'][10:12],cubePoints['yPnts'][10:12],
 cubePoints['zPnts'][10:12],color='red',linewidth=1.5)
 
 # Rotated Cube
-plt3dRot = plt.figure().gca(projection='3d')
+plt3dRot = plt.figure(3).gca(projection='3d')
 
 plt3dRot.scatter(cubePlot['xPnts'][0:9],cubePlot['yPnts'][0:9],
 cubePlot['zPnts'][0:9],color='red')
@@ -234,7 +234,8 @@ for row in range(0,len(cubeDrawnSp)):
     cubeDrawn['zPnts'][row] = zpnt
 
 
- 
+# Rotated each point in Cube to get rotated cube with 
+# Diag as center axis with length of 2 (-1.0 to 1.0)
 
 # Setup a plane for plot
 point1 = np.array([0,0,0])
@@ -242,6 +243,7 @@ normal1 = np.array([0,0,1])
 
 xx, yy = np.meshgrid(range(2),range(2))
 
+# Rotate all points with Normal vector
 d1 = -np.sum(point1*normal1) # Dot product
 z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1/normal1[2]
 
@@ -260,7 +262,7 @@ lines = np.concatenate((line0_7,line1_4),axis=0)
 #lines = np.concatenate((lines,line0_5),axis=0)
     
 # Plot Drawn(rotated) Cube
-plt3dRaw = plt.figure().gca(projection='3d')
+plt3dRaw = plt.figure(4).gca(projection='3d')
 
 plt3dRaw.scatter(cubeDrawn['xPnts'],cubeDrawn['yPnts'],
 cubeDrawn['zPnts'],color='red',s=54.2)
@@ -276,7 +278,7 @@ circleStruct['zPnts'],color='blue',linewidth=0.7)
 for row in range(0,len(cubeDrawn)-1):
     lineVec1 = np.array(list(cubeDrawn[row]))
     lineVec2 = np.array(list(cubeDrawn[row+1]))
-    lineMat = np.array([lineVec1,lineVec2])
+    lineMat =  np.array([lineVec1,lineVec2])
     #print(lineMat)
     plt3dRaw.plot(lineMat[:,0],lineMat[:,1],lineMat[:,2],
     color='blue',linewidth=0.7)
@@ -289,4 +291,69 @@ plt3dRaw.plot_surface(-xx,-yy,z1,color=(0.2,0.1,0.9,0.3))
 #plt3d.set_xlim(-2,2); plt3d.set_ylim(-2,2)
 #plt3d.set_zlim(0,1.2)
 
+# Rotated Cube
+plt3dTriang = plt.figure(5).gca(projection='3d')
+
+# A circle
+# sph2cartvec
+azimCircle = np.arange(0,2*np.pi,2*np.pi/300)
+polCircle = np.array([ 0.0 ]*len(azimCircle))
+radCircle = np.array([ 1.0 ]*len(azimCircle))
+
+circleMat = np.zeros(len(azimCircle),dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+xConv, yConv, zConv = sph2cartvec(azimCircle,polCircle,radCircle)
+circleMat['xPnts'] = xConv; circleMat['yPnts'] = yConv;
+circleMat['zPnts'] = zConv
+
+#lineMat2 = np.zeros([4])
+lineMat2 = np.zeros(12,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+
+# Four surface to make One plane: Upper plane
+plt3dTriang.plot_surface(xx,yy,z1,  color=(0.2,0.1,0.9,0.2))
+plt3dTriang.plot_surface(-xx,yy,z1, color=(0.2,0.1,0.9,0.2))
+plt3dTriang.plot_surface(xx,-yy,z1, color=(0.2,0.1,0.9,0.2))
+plt3dTriang.plot_surface(-xx,-yy,z1,color=(0.2,0.1,0.9,0.2))
+
+twoSq2 = 2*np.sqrt(2) 
+
+ 
+lineMat2[0] = np.array([0,0,0])
+lineMat2[1] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][0:2],lineMat2['yPnts'][0:2],
+lineMat2['zPnts'][0:2],color='blue',linewidth=1.5)
+
+lineMat2[2] = np.array([0,0,0])
+lineMat2[3] = np.array([np.cos(np.pi/3)*twoSq2/3,0,0])
+plt3dTriang.plot(lineMat2['xPnts'][2:4],lineMat2['yPnts'][2:4],
+lineMat2['zPnts'][2:4],color='red',linewidth=1.5)
+
+lineMat2[4] = np.array([0,0,0])
+lineMat2[5] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,1/3])
+plt3dTriang.plot(lineMat2['xPnts'][4:6],lineMat2['yPnts'][4:6],
+lineMat2['zPnts'][4:6],color='blue',linewidth=1.5)
+
+lineMat2[6] = np.array([0,0,-1/2])
+lineMat2[7] = np.array([0,0,1/2])
+plt3dTriang.plot(lineMat2['xPnts'][6:8],lineMat2['yPnts'][6:8],
+lineMat2['zPnts'][6:8],color='black',linewidth=1.5)
+
+lineMat2[8] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
+lineMat2[9] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,1/3])
+plt3dTriang.plot(lineMat2['xPnts'][8:10],lineMat2['yPnts'][8:10],
+lineMat2['zPnts'][8:10],color='blue',linewidth=1.5)
+
+lineMat2[10] = np.array([np.cos(np.pi/3)*twoSq2/3,0,0])
+lineMat2[11] = np.array([np.cos(np.pi/3)*twoSq2/3,np.sin(np.pi/3)*twoSq2/3,0])
+plt3dTriang.plot(lineMat2['xPnts'][10:12],lineMat2['yPnts'][10:12],
+lineMat2['zPnts'][10:12],color='red',linewidth=1.5)
+
+
+plt3dTriang.scatter(circleMat['xPnts'],circleMat['yPnts'],circleMat['zPnts'],
+color='blue',s=0.5)
+
+
 plt.show()
+
+
+
+
