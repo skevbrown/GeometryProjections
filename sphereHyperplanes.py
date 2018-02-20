@@ -58,9 +58,15 @@ cart2sphvec = np.vectorize(cart2sph);
 
 
 
-xx1, yy1 = np.meshgrid(np.arange(-3,3.5,0.5),np.arange(-3,3.5,0.5))
+xx1, yy1 = np.meshgrid(np.arange(-3,3.1,0.1),np.arange(-3,3.1,0.1))
 #d1 = -np.sum(point1*normal1)
 z1 = xx1 * 0
+
+circleAx = np.arange(0, 2*np.pi, 2*np.pi/100)
+circlePol = np.array([0]* len(circleAx))
+circleRad = np.array([1.0]* len(circleAx))
+
+circleX, circleY, circleZ = sph2cartvec(circleAx,circlePol,circleRad)
 
 npt = 40; npi = npt-1; nptB = npt*2
 indUp = 1+1/npi
@@ -78,45 +84,71 @@ radMesh = radMesh.reshape(npt,npt)
 xSphere, ySphere, zSphere = sph2cartvec(axisMesh,polMesh,radMesh)
 ySphere2 = -ySphere
 
-#xSphere = xSphere.flatten(); ySphere.flatten()
-#zSphere.flatten()
+zSphere2 = xSphere*0
 
-#xSphere = np.concatenate((xSphere,xSphere),axis=0)
-#xSphere = np.concatenate((-xSphere,-xSphere),axis=0)
-#ySphere = np.concatenate((ySphere,-ySphere),axis=0)
-#ySphere = np.concatenate((-ySphere,-ySphere),axis=0)
-#zSphere = np.concatenate((zSphere,zSphere),axis=0)
-#zSphere = np.concatenate((zSphere,zSphere),axis=0)
 
-#xSphere = xSphere.reshape(nptB,nptB)
-#ySphere = ySphere.reshape(nptB,nptB)
-#zSphere = zSphere.reshape(nptB,nptB)
-
-lineMat = np.zeros(2,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+lineMat = np.zeros(6,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
 
         
 fig1 = plt.figure(1)
 Wire3 = fig1.gca(projection='3d')
 
-#Wire3.scatter(xSphere,ySphere,zSphere,color=[0.3,0.3,0.9,1.0],s=2)
+# The two blue half spheres
 Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.3])
 Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.3])
 Wire3.set_xlim([-3,3]); Wire3.set_ylim([-3,3])
 Wire3.set_zlim(-1.0,1.0)
 
-
+# Line from (0,0,1)
 lineMat[0] = np.array([0,0,1.0])
 lineMat[1] = np.array([np.sqrt(2),0,0])
 Wire3.plot(lineMat['xPnts'][0:2],lineMat['yPnts'][0:2],
 lineMat['zPnts'][0:2],color='red',linewidth=1.5)
 
-
+# Point at (2/3 sqrt 2, 0, 1/3)
+Wire3.scatter((2/3)*np.sqrt(2),0,1/3,color='blue',s=35)
+Wire3.scatter(np.sqrt(2),0,0,color='blue',s=35)
 
      # Use this Scaling with range and a generator
      #Wire3d.plot_wireframe(xx1*0.01,yy1*0.01,z1,[30,30])
 
-Wire3.plot_wireframe(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3])
+
+# Red flat grid plane
+Wire3.scatter(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3],s=8)
+
+# A circle of Radius 1
+Wire3.scatter(circleX,circleY,circleZ,color='red',s=8)
 
 
+fig2 = plt.figure(2)
+Wire4 = fig2.gca(projection='3d')
 
+# The two blue half spheres
+Wire4.plot_wireframe(xSphere,ySphere,-zSphere,color=[0.3,0.3,1.0,0.3])
+Wire4.plot_wireframe(xSphere,ySphere2,-zSphere,color=[0.3,0.3,1.0,0.3])
+Wire4.set_xlim([-3,3]); Wire3.set_ylim([-3,3])
+Wire4.set_zlim(-1.0,1.0)
+
+# Circle in Z=0 with radius 1
+Wire4.scatter(xSphere,ySphere,zSphere2,color=[1.0,0,0,0.5],s=6)
+Wire4.scatter(xSphere,-ySphere,zSphere2,color=[1.0,0,0,0.5],s=6)
+Wire4.set_xlim([-3,3]); Wire4.set_ylim([-3,3])
+Wire4.set_zlim(-1.0,1.0)
+
+# Line from (0,0,1)
+lineMat[2] = np.array([0,0,1.0])
+lineMat[3] = np.array([np.sqrt(2)/3,np.sqrt(6)/3,-1/3])
+Wire4.plot(lineMat['xPnts'][2:4],lineMat['yPnts'][2:4],
+lineMat['zPnts'][2:4],color='blue',linewidth=1.5)
+
+# Line from (0,0,-1)
+lineMat[4] = np.array([0,0,-1.0])
+lineMat[5] = np.array([np.sqrt(2)/3,np.sqrt(6)/3,1/3])
+Wire4.plot(lineMat['xPnts'][4:6],lineMat['yPnts'][4:6],
+lineMat['zPnts'][4:6],color='green',linewidth=1.5)
+
+# Point at (2/3 sqrt 2, 0, 1/3)
+Wire4.scatter(1/(2*np.sqrt(2)),np.sqrt(3)/(2*np.sqrt(2)),0,color='blue',s=50)
+Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,-1/3,color='red',s=50)
+Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,1/3,color='red',s=50)
 plt.show()
