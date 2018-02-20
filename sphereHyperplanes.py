@@ -64,6 +64,7 @@ z1 = xx1 * 0
 
 axim = np.arange(0,np.pi,np.pi/30)
 polar =  np.arange(0,np.pi/2,(1/30)*np.pi/2)
+aximMesh, polMesh = np.meshgrid(axim,polar)
 radius = np.array([1.0] * len(axim))
 
 xSphere, ySphere, zSphere = sph2cartvec(axim,polar,radius)
