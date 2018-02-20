@@ -58,34 +58,65 @@ cart2sphvec = np.vectorize(cart2sph);
 
 
 
-xx1, yy1 = np.meshgrid(np.arange(-10,10),np.arange(-10,10))
+xx1, yy1 = np.meshgrid(np.arange(-3,3.5,0.5),np.arange(-3,3.5,0.5))
 #d1 = -np.sum(point1*normal1)
 z1 = xx1 * 0
 
-axim = np.arange(0,np.pi,np.pi/30)
-polar =  np.arange(0,np.pi/2,(1/30)*np.pi/2)
-radius = np.array([1.0] * len(axim))
+npt = 40; npi = npt-1; nptB = npt*2
+indUp = 1+1/npi
+ 
+axim =  np.arange(0, indUp, 1/npi) ; axim = axim*np.pi
+polar = np.arange(0, indUp, 1/npi) ; polar = polar*np.pi/2
+#radius = np.array([1.0] * len(axim))
 
-xSphere, ySphere, zSphere = sph2cartvec(axim,polar,radius)
+axisMesh, polMesh = np.meshgrid(axim,polar)
+radius = np.array([1.0] * (npt)*(npt))
 
 
-xx2, yy2 = np.meshgrid(xSphere,ySphere)
-z2 = xx2
+radMesh = radius
+radMesh = radMesh.reshape(npt,npt)
+xSphere, ySphere, zSphere = sph2cartvec(axisMesh,polMesh,radMesh)
+ySphere2 = -ySphere
 
-for i in range(0,len(xx2)):
-    for ii in range(0,len(xx2[0])):
-        z2[i][ii] = np.sqrt(1-xx2[i][ii]**2 - yy2[i][ii]**2)
+#xSphere = xSphere.flatten(); ySphere.flatten()
+#zSphere.flatten()
+
+#xSphere = np.concatenate((xSphere,xSphere),axis=0)
+#xSphere = np.concatenate((-xSphere,-xSphere),axis=0)
+#ySphere = np.concatenate((ySphere,-ySphere),axis=0)
+#ySphere = np.concatenate((-ySphere,-ySphere),axis=0)
+#zSphere = np.concatenate((zSphere,zSphere),axis=0)
+#zSphere = np.concatenate((zSphere,zSphere),axis=0)
+
+#xSphere = xSphere.reshape(nptB,nptB)
+#ySphere = ySphere.reshape(nptB,nptB)
+#zSphere = zSphere.reshape(nptB,nptB)
+
+lineMat = np.zeros(2,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+
         
-                
-fig1 = plt.figure(1)          # A static 3d plot
-Wire3d = fig1.gca(projection='3d') 
+fig1 = plt.figure(1)
+Wire3 = fig1.gca(projection='3d')
+
+#Wire3.scatter(xSphere,ySphere,zSphere,color=[0.3,0.3,0.9,1.0],s=2)
+Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.3])
+Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.3])
+Wire3.set_xlim([-3,3]); Wire3.set_ylim([-3,3])
+Wire3.set_zlim(-1.0,1.0)
 
 
-# Use this Scaling with range and a generator
-#Wire3d.plot_wireframe(xx1*0.01,yy1*0.01,z1,[30,30])
+lineMat[0] = np.array([0,0,1.0])
+lineMat[1] = np.array([np.sqrt(2),0,0])
+Wire3.plot(lineMat['xPnts'][0:2],lineMat['yPnts'][0:2],
+lineMat['zPnts'][0:2],color='red',linewidth=1.5)
 
-Wire3d.plot_wireframe(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3])
-Wire3d.plot_wireframe(xx2,yy2,z2,color=[0.3,0.2,0.7,0.3])
+
+
+     # Use this Scaling with range and a generator
+     #Wire3d.plot_wireframe(xx1*0.01,yy1*0.01,z1,[30,30])
+
+Wire3.plot_wireframe(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3])
+
 
 
 plt.show()
