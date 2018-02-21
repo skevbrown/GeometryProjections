@@ -58,7 +58,7 @@ cart2sphvec = np.vectorize(cart2sph);
 
 
 
-xx1, yy1 = np.meshgrid(np.arange(-3,3.1,0.1),np.arange(-3,3.1,0.1))
+xx1, yy1 = np.meshgrid(np.arange(-2,2.05,0.05),np.arange(-2,2.05,0.05))
 #d1 = -np.sum(point1*normal1)
 z1 = xx1 * 0
 
@@ -96,7 +96,7 @@ Wire3 = fig1.gca(projection='3d')
 # The two blue half spheres
 Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.3])
 Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.3])
-Wire3.set_xlim([-3,3]); Wire3.set_ylim([-3,3])
+Wire3.set_xlim([-2,2]); Wire3.set_ylim([-2,2])
 Wire3.set_zlim(-1.0,1.0)
 
 # Line from (0,0,1)
@@ -107,7 +107,9 @@ lineMat['zPnts'][0:2],color='red',linewidth=1.5)
 
 # Point at (2/3 sqrt 2, 0, 1/3)
 Wire3.scatter((2/3)*np.sqrt(2),0,1/3,color='blue',s=35)
-Wire3.scatter(np.sqrt(2),0,0,color='blue',s=35)
+Wire3.scatter(np.sqrt(2),0,0,color='blue',s=75)
+Wire3.scatter(np.cos(2*np.pi/3)*np.sqrt(2),np.sin(2*np.pi/3)*np.sqrt(2),0,  color='blue',s=75)
+Wire3.scatter(np.cos(-2*np.pi/3)*np.sqrt(2),np.sin(-2*np.pi/3)*np.sqrt(2),0,color='blue',s=75)
 
      # Use this Scaling with range and a generator
      #Wire3d.plot_wireframe(xx1*0.01,yy1*0.01,z1,[30,30])
@@ -124,16 +126,15 @@ fig2 = plt.figure(2)
 Wire4 = fig2.gca(projection='3d')
 
 # The two blue half spheres
-Wire4.plot_wireframe(xSphere,ySphere,-zSphere,color=[0.3,0.3,1.0,0.3])
+Wire4.plot_wireframe(xSphere,ySphere,-zSphere, color=[0.3,0.3,1.0,0.3])
 Wire4.plot_wireframe(xSphere,ySphere2,-zSphere,color=[0.3,0.3,1.0,0.3])
-Wire4.set_xlim([-3,3]); Wire3.set_ylim([-3,3])
+Wire4.set_xlim([-2,2]); Wire4.set_ylim([-2,2])
 Wire4.set_zlim(-1.0,1.0)
 
 # Circle in Z=0 with radius 1
-Wire4.scatter(xSphere,ySphere,zSphere2,color=[1.0,0,0,0.5],s=6)
-Wire4.scatter(xSphere,-ySphere,zSphere2,color=[1.0,0,0,0.5],s=6)
-Wire4.set_xlim([-3,3]); Wire4.set_ylim([-3,3])
-Wire4.set_zlim(-1.0,1.0)
+Wire4.scatter(xSphere,ySphere,zSphere2,color=[0.7,0.2,0.6,0.3],s=3)
+Wire4.scatter(xSphere,-ySphere,zSphere2,color=[0.6,0.2,0.6,0.3],s=3)
+
 
 # Line from (0,0,1)
 lineMat[2] = np.array([0,0,1.0])
@@ -148,7 +149,11 @@ Wire4.plot(lineMat['xPnts'][4:6],lineMat['yPnts'][4:6],
 lineMat['zPnts'][4:6],color='green',linewidth=1.5)
 
 # Point at (2/3 sqrt 2, 0, 1/3)
-Wire4.scatter(1/(2*np.sqrt(2)),np.sqrt(3)/(2*np.sqrt(2)),0,color='blue',s=50)
-Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,-1/3,color='red',s=50)
-Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,1/3,color='red',s=50)
+Wire4.scatter(1/(2*np.sqrt(2)),np.sqrt(3)/(2*np.sqrt(2)),0,color='red',s=95)
+Wire4.scatter(1/(np.sqrt(2))*np.cos(np.pi),(1/np.sqrt(2))*np.sin(np.pi),0,color='red',s=95)
+Wire4.scatter(1/(np.sqrt(2))*np.cos(-np.pi/3),(1/np.sqrt(2))*np.sin(-np.pi/3),0,color='red',s=95)
+Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,-1/3,color='blue',s=50)
+Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,1/3,color='blue',s=50)
+
+
 plt.show()
