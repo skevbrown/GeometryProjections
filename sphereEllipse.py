@@ -62,15 +62,17 @@ xx1, yy1 = np.meshgrid(np.arange(-2,2.05,0.05),np.arange(-2,2.05,0.05))
 #d1 = -np.sum(point1*normal1)
 z1 = xx1 * 0
 
+# Set up a Circle for Z=0
 circleAx = np.arange(0, 2*np.pi, 2*np.pi/100)
 circlePol = np.array([0]* len(circleAx))
 circleRad = np.array([1.0]* len(circleAx))
 
 circleX, circleY, circleZ = sph2cartvec(circleAx,circlePol,circleRad)
 
-npt = 40; npi = npt-1; nptB = npt*2
+npt = 8; npi = npt-1; nptB = npt*2
 indUp = 1+1/npi
- 
+
+# Make sphere Mesh using Axial an Polar coords, turn to mesh, Then Cart
 axim =  np.arange(0, indUp, 1/npi) ; axim = axim*np.pi
 polar = np.arange(0, indUp, 1/npi) ; polar = polar*np.pi/2
 #radius = np.array([1.0] * len(axim))
@@ -89,78 +91,64 @@ zSphere2 = xSphere*0
 
 lineMat = np.zeros(6,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
 
+# Shortcut this value
 Sq2o3 = np.sqrt(2)/3
-        
+
+
 fig1 = plt.figure(1)
 Wire3 = fig1.gca(projection='3d')
 
 # The two blue half spheres
-Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.3])
-Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.3])
+Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.1])
+Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.1])
+Wire3.plot_wireframe(xSphere,ySphere,-zSphere, color=[0.3,0.3,1.0,0.1])
+Wire3.plot_wireframe(xSphere,ySphere2,-zSphere,color=[0.3,0.3,1.0,0.1])
 Wire3.set_xlim([-2,2]); Wire3.set_ylim([-2,2])
 Wire3.set_zlim(-1.0,1.0)
 
 # Line from (0,0,1)
-lineMat[0] = np.array([0,0,1.0])
-lineMat[1] = np.array([np.sqrt(2),0,0])
-Wire3.plot(lineMat['xPnts'][0:2],lineMat['yPnts'][0:2],
-lineMat['zPnts'][0:2],color='red',linewidth=1.5)
+#lineMat[0] = np.array([0,0,1.0])
+#lineMat[1] = np.array([np.sqrt(2),0,0])
+#Wire3.plot(lineMat['xPnts'][0:2],lineMat['yPnts'][0:2],
+#lineMat['zPnts'][0:2],color='red',linewidth=1.5)
 
-# Point at (2/3 sqrt 2, 0, 1/3)
-Wire3.scatter((2/3)*np.sqrt(2),0,1/3,color='red',s=75)
-Wire3.scatter(np.sqrt(2),0,0,color='blue',s=75)
-Wire3.scatter(-Sq2o3,np.sqrt(3)*Sq2o3,1/3,color='red',s=75)
-Wire3.scatter(-Sq2o3,-np.sqrt(3)*Sq2o3,1/3,color='red',s=75)
-Wire3.scatter(np.cos(2*np.pi/3)*np.sqrt(2),np.sin(2*np.pi/3)*np.sqrt(2),0,  color='blue',s=75)
-Wire3.scatter(np.cos(-2*np.pi/3)*np.sqrt(2),np.sin(-2*np.pi/3)*np.sqrt(2),0,color='blue',s=75)
+# Line for ellipse, Ellipse, and setup Normal Vec
+zl = -0.5; zu = 0.5;
+ellipseLine = np.arange(zl,zu,(zu-zl)/200); lenEL = len(ellipseLine)
+ellLiMat = np.zeros(lenEL,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
+ellLiMat['zPnts'] = ellipseLine
+ellUpX = np.sqrt( abs(1 - 0 -zu**2) ) 
+ellLowX = -np.sqrt( abs(1 - 0 -zl**2) )
+ellipX = np.arange(ellLowX,ellUpX, (ellUpX-ellLowX)/lenEL)
+ellLiMat['xPnts'] = ellipX
 
-     # Use this Scaling with range and a generator
-     #Wire3d.plot_wireframe(xx1*0.01,yy1*0.01,z1,[30,30])
+ellNormPhi, ellNormTh, ellNormRad = cart2sph(ellUpX,0,zu)
+ellNormal = np.zeros([2,3])
+ellNormal[1] = sph2cart(ellNormPhi,ellNormTh + np.pi/2,ellNormRad*1.2)
 
+#Wire3.scatter(ellLiMat['xPnts'],ellLiMat['yPnts'],ellLiMat['zPnts'],s=8,
+#color=[0.2,0.2,0.9,0.9])
+
+Wire3.plot(ellNormal[0:,0],ellNormal[0:,1],ellNormal[0:,2],
+color=[0.3,0.8,0.3,0.8],linewidth=3.5)
+
+ellipse = ellLiMat.copy()
+ellipse = np.concatenate((ellipse,ellLiMat),axis=0)
+ellipse['yPnts'] = np.sqrt( 1 - ellipse['xPnts']**2 - ellipse['zPnts']**2)
+ellipseHalf = int(len(ellipse)/2)
+ellipse['yPnts'][ellipseHalf:] = -ellipse['yPnts'][ellipseHalf:]
+
+
+Wire3.scatter(ellipse['xPnts'],ellipse['yPnts'],ellipse['zPnts'],s=20,
+color=[0.8,0.7,0.4,0.9])
 
 # Red flat grid plane
-Wire3.scatter(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3],s=8)
+#Wire3.scatter(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3],s=8)
 
 # A circle of Radius 1
 Wire3.scatter(circleX,circleY,circleZ,color='red',s=8)
 
 
-fig2 = plt.figure(2)
-Wire4 = fig2.gca(projection='3d')
-
-# The two blue half spheres
-Wire4.plot_wireframe(xSphere,ySphere,-zSphere, color=[0.3,0.3,1.0,0.3])
-Wire4.plot_wireframe(xSphere,ySphere2,-zSphere,color=[0.3,0.3,1.0,0.3])
-Wire4.set_xlim([-2,2]); Wire4.set_ylim([-2,2])
-Wire4.set_zlim(-1.0,1.0)
-
-# Circle in Z=0 with radius 1
-Wire4.scatter(xSphere,ySphere,zSphere2,color=[0.7,0.2,0.6,0.3],s=3)
-Wire4.scatter(xSphere,-ySphere,zSphere2,color=[0.6,0.2,0.6,0.3],s=3)
-
-
-# Line from (0,0,1)
-lineMat[2] = np.array([0,0,1.0])
-lineMat[3] = np.array([np.sqrt(2)/3,np.sqrt(6)/3,-1/3])
-Wire4.plot(lineMat['xPnts'][2:4],lineMat['yPnts'][2:4],
-lineMat['zPnts'][2:4],color='blue',linewidth=1.5)
-
-# Line from (0,0,-1)
-lineMat[4] = np.array([0,0,-1.0])
-lineMat[5] = np.array([np.sqrt(2)/3,np.sqrt(6)/3,1/3])
-Wire4.plot(lineMat['xPnts'][4:6],lineMat['yPnts'][4:6],
-lineMat['zPnts'][4:6],color='green',linewidth=1.5)
-
-# Point at (2/3 sqrt 2, 0, 1/3)
-Wire4.scatter(1/(2*np.sqrt(2)),np.sqrt(3)/(2*np.sqrt(2)),0,color='red',s=95)
-Wire4.scatter(1/(np.sqrt(2))*np.cos(np.pi),(1/np.sqrt(2))*np.sin(np.pi),0,color='red',s=95)
-Wire4.scatter(1/(np.sqrt(2))*np.cos(-np.pi/3),(1/np.sqrt(2))*np.sin(-np.pi/3),0,color='red',s=95)
-Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,-1/3,color='blue',s=50)
-Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,-1/3,color='blue',s=50)
-Wire4.scatter(Sq2o3,-np.sqrt(3)*Sq2o3,-1/3,color='blue',s=50)
-Wire4.scatter(-2*np.sqrt(2)/3,0,-1/3,color='blue',s=50)
-
-Wire4.scatter(np.sqrt(2)/3,np.sqrt(6)/3,1/3,color='blue',s=50)
 
 
 plt.show() 
