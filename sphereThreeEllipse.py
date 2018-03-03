@@ -183,20 +183,37 @@ Eta = np.array( [complex(0.0,0.0)]*len(ellipse))
 Eta.real = ellipse['xPnts']/(1+ellipse['zPnts'])
 Eta.imag = -ellipse['yPnts']/(1+ellipse['zPnts'])
 
- 
+Zeta2 = np.array( [complex(0.0,0.0)]*len(ellipse2))
+Zeta2.real = ellipse2['xPnts']/(1-ellipse2['zPnts'])
+Zeta2.imag = ellipse2['yPnts']/(1-ellipse2['zPnts'])
+
+Zeta3 = np.array( [complex(0.0,0.0)]*len(ellipse3))
+Zeta3.real = ellipse3['xPnts']/(1-ellipse3['zPnts'])
+Zeta3.imag = ellipse3['yPnts']/(1-ellipse3['zPnts'])
+
 ZetaCenter = (max(Zeta.real) - min(Zeta.real))/2;
 ZetaCenter = max(Zeta.real) - ZetaCenter
 EtaCenter = -ZetaCenter
 
 fig2 = plt.figure(2)
 ZetaHalf = int(len(Zeta)/2)
-plt.plot(Zeta.real[:-ZetaHalf],Zeta.imag[:-ZetaHalf],'b.',linewidth=1.5,markersize=8.5)
-plt.plot(Zeta.real[ZetaHalf:],Zeta.imag[ZetaHalf:],  'b.',linewidth=1.5,markersize=8.5)
-plt.plot(Eta.real[:-ZetaHalf],Eta.imag[:-ZetaHalf],  'b.',linewidth=1.5,markersize=8.5)
-plt.plot(Eta.real[ZetaHalf:],Eta.imag[ZetaHalf:],    'b.',linewidth=1.5,markersize=8.5)
+plt.plot(Zeta.real[:-ZetaHalf],Zeta.imag[:-ZetaHalf],'b.',
+color=[0.8,0.7,0.4,0.9],linewidth=1.5,markersize=2.5)
+plt.plot(Zeta.real[ZetaHalf:],Zeta.imag[ZetaHalf:],  'b.',
+color=[0.8,0.7,0.4,0.9],linewidth=1.5,markersize=2.5)
+#plt.plot(Eta.real[:-ZetaHalf],Eta.imag[:-ZetaHalf],  'b.',linewidth=1.5,markersize=2.5)
+#plt.plot(Eta.real[ZetaHalf:],Eta.imag[ZetaHalf:],    'b.',linewidth=1.5,markersize=2.5)
+plt.plot(Zeta2.real[:-ZetaHalf],Zeta2.imag[:-ZetaHalf],'r.',
+color=[0.4,0.7,0.8,0.9],linewidth=1.5,markersize=2.5)
+plt.plot(Zeta2.real[ZetaHalf:],Zeta2.imag[ZetaHalf:],  'r.',
+color=[0.4,0.7,0.8,0.9],linewidth=1.5,markersize=2.5)
+plt.plot(Zeta3.real[:-ZetaHalf],Zeta3.imag[:-ZetaHalf],'r.',
+color=[0.4,0.8,0.2,0.9],linewidth=1.5,markersize=2.5)
+plt.plot(Zeta3.real[ZetaHalf:],Zeta3.imag[ZetaHalf:],  'r.',
+color=[0.4,0.8,0.2,0.9],linewidth=1.5,markersize=2.5)
 
-
-plt.xlim([-2.0,2.0]); plt.ylim([-2.0,2.0])
+plt.xlim([-5.0,5.0]); plt.ylim([-5.0,5.0])
+plt.gca().set_aspect('equal', adjustable='box') 
 plt.grid()
 
 plt.plot([ZetaCenter,EtaCenter],[0,0],'r+',markersize=8)
