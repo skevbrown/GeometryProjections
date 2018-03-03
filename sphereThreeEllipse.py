@@ -84,9 +84,9 @@ radius = np.array([1.0] * (npt)*(npt))
 radMesh = radius
 radMesh = radMesh.reshape(npt,npt)
 xSphere, ySphere, zSphere = sph2cartvec(axisMesh,polMesh,radMesh)
-ySphere2 = -ySphere
 
-zSphere2 = xSphere*0
+
+
 
 
 lineMat = np.zeros(6,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8')])
@@ -100,9 +100,9 @@ Wire3 = fig1.gca(projection='3d')
 
 # The two blue half spheres
 Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.1])
-Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.1])
+Wire3.plot_wireframe(xSphere,-ySphere,zSphere,color=[0.3,0.3,1.0,0.1])
 Wire3.plot_wireframe(xSphere,ySphere,-zSphere, color=[0.3,0.3,1.0,0.1])
-Wire3.plot_wireframe(xSphere,ySphere2,-zSphere,color=[0.3,0.3,1.0,0.1])
+Wire3.plot_wireframe(xSphere,-ySphere,-zSphere,color=[0.3,0.3,1.0,0.1])
 Wire3.set_xlim([-2,2]); Wire3.set_ylim([-2,2])
 Wire3.set_zlim(-1.0,1.0)
 
@@ -114,7 +114,7 @@ Wire3.set_zlim(-1.0,1.0)
 
 # Line for ellipse, Ellipse, and setup Normal Vec
 noDiv = 200
-zl = -0.505; zu = 0.505; incr =(zu-zl)/noDiv
+zl = -0.5; zu = 0.5; incr =(zu-zl)/noDiv
 ellipseLine = np.arange(zl,zu+incr,incr); 
 ellipseLine = np.append(ellipseLine,-ellipseLine[0])
 
@@ -150,8 +150,24 @@ ellipseHalf = int(len(ellipse)/2)
 ellipse['yPnts'][ellipseHalf:] = -ellipse['yPnts'][ellipseHalf:]
 ellipse['yPnts'][0] = 0; ellipse['yPnts'][ellipseHalf-1] = 0;
 
+ellipse2 = ellipse.copy()
+ellipAxim, ellipPolar, ellipRad = cart2sphvec(ellipse2['xPnts'],ellipse2['yPnts'],ellipse2['zPnts'])
+ellipAxim = ellipAxim + 2*np.pi/3;
+ellipse2['xPnts'],ellipse2['yPnts'],ellipse2['zPnts'] = \
+                        sph2cartvec(ellipAxim,ellipPolar,ellipRad)
+
+ellipse3 = ellipse.copy()
+ellipAxim, ellipPolar, ellipRad = cart2sphvec(ellipse3['xPnts'],ellipse3['yPnts'],ellipse3['zPnts'])
+ellipAxim = ellipAxim - 2*np.pi/3;
+ellipse3['xPnts'],ellipse3['yPnts'],ellipse3['zPnts'] = \
+                        sph2cartvec(ellipAxim,ellipPolar,ellipRad)
+
 Wire3.scatter(ellipse['xPnts'],ellipse['yPnts'],ellipse['zPnts'],s=20,
 color=[0.8,0.7,0.4,0.9])
+Wire3.scatter(ellipse2['xPnts'],ellipse2['yPnts'],ellipse2['zPnts'],s=20,
+color=[0.4,0.7,0.8,0.9])
+Wire3.scatter(ellipse3['xPnts'],ellipse3['yPnts'],ellipse3['zPnts'],s=20,
+color=[0.4,0.8,0.2,0.9])
 
 # Red flat grid plane
 #Wire3.scatter(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3],s=8)
