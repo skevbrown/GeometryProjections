@@ -113,10 +113,11 @@ Wire3.set_zlim(-1.0,1.0)
 #lineMat['zPnts'][0:2],color='red',linewidth=1.5)
 
 # Line for ellipse, Ellipse, and setup Normal Vec
-noDiv = 200
-zl = -0.5; zu = 0.5; incr =(zu-zl)/noDiv
+noDiv = 200; sinpi5 = np.sin(1*np.pi/5)
+zl = -0.578; zu = 0.578; incr =(zu-zl)/noDiv
 ellipseLine = np.arange(zl,zu+incr,incr); 
-ellipseLine = np.append(ellipseLine,-ellipseLine[0])
+#ellipseLine = np.append(ellipseLine,-ellipseLine[0])
+ellipseLine[-1] = -ellipseLine[0]
 
 #ellPad = np.arange(ellipseLine[-2],ellipseLine[-1],(ellipseLine[-1]-ellipseLine[-2])/50)
 
@@ -129,14 +130,17 @@ ellUpX = np.sqrt( 1 - 0 -zu**2 )
 ellLowX = -np.sqrt( 1 - 0 -zl**2 )
 incr2 = (ellUpX-ellLowX)/lenEL
 ellipX = np.arange(ellLowX,ellUpX, incr2)
-#ellipX[-1] = -ellipX[0]
+#if len(ellipX) > len(ellLiMat):
+#    ellipX = ellipX[0:-1]
+ellipX[-1] = -ellipX[0]
 ellLiMat['xPnts'] = ellipX
+
 
 ellNormPhi, ellNormTh, ellNormRad = cart2sph(ellUpX,0,zu)
 ellNormal = np.zeros([2,3])
 ellNormal[1] = sph2cart(ellNormPhi,ellNormTh + np.pi/2,ellNormRad*1.2)
 
-# Lin e that defines Ellipse
+# Line that defines Ellipse
 #Wire3.scatter(ellLiMat['xPnts'],ellLiMat['yPnts'],ellLiMat['zPnts'],s=8,
 #color=[0.2,0.2,0.9,0.9])
 
@@ -145,7 +149,7 @@ color=[0.3,0.8,0.3,0.8],linewidth=3.5)
 
 ellipse = ellLiMat.copy()
 ellipse = np.concatenate((ellipse,ellLiMat),axis=0)
-ellipse['yPnts'] = np.sqrt( 1 - ellipse['xPnts']**2 - ellipse['zPnts']**2)
+ellipse['yPnts'] = np.sqrt( (abs(1 - ellipse['xPnts']**2 - ellipse['zPnts']**2)))
 ellipseHalf = int(len(ellipse)/2)
 ellipse['yPnts'][ellipseHalf:] = -ellipse['yPnts'][ellipseHalf:]
 ellipse['yPnts'][0] = 0; ellipse['yPnts'][ellipseHalf-1] = 0;
@@ -198,9 +202,9 @@ EtaCenter = -ZetaCenter
 fig2 = plt.figure(2)
 ZetaHalf = int(len(Zeta)/2)
 plt.plot(Zeta.real[:-ZetaHalf],Zeta.imag[:-ZetaHalf],'b.',
-color=[0.8,0.7,0.4,0.9],linewidth=1.5,markersize=2.5)
+color=[0.8,0.7,0.4,0.9],linewidth=1.5,markersize=16.5)
 plt.plot(Zeta.real[ZetaHalf:],Zeta.imag[ZetaHalf:],  'b.',
-color=[0.8,0.7,0.4,0.9],linewidth=1.5,markersize=2.5)
+color=[0.8,0.7,0.4,0.9],linewidth=1.5,markersize=16.5)
 #plt.plot(Eta.real[:-ZetaHalf],Eta.imag[:-ZetaHalf],  'b.',linewidth=1.5,markersize=2.5)
 #plt.plot(Eta.real[ZetaHalf:],Eta.imag[ZetaHalf:],    'b.',linewidth=1.5,markersize=2.5)
 plt.plot(Zeta2.real[:-ZetaHalf],Zeta2.imag[:-ZetaHalf],'r.',
@@ -212,12 +216,25 @@ color=[0.4,0.8,0.2,0.9],linewidth=1.5,markersize=2.5)
 plt.plot(Zeta3.real[ZetaHalf:],Zeta3.imag[ZetaHalf:],  'r.',
 color=[0.4,0.8,0.2,0.9],linewidth=1.5,markersize=2.5)
 
-plt.xlim([-5.0,5.0]); plt.ylim([-5.0,5.0])
-plt.gca().set_aspect('equal', adjustable='box') 
-plt.grid()
 
 plt.plot([ZetaCenter,EtaCenter],[0,0],'r+',markersize=8)
 
+Zetaline = np.zeros([4,2])
+Zetaline[0,:] = [Zeta.imag[0],  Zeta.real[0]]
+Zetaline[1,:] = [Zeta.imag[200],Zeta.real[200]]
+
+ZetamidX = (Zetaline[1,1] - Zetaline[0,1])/2.0 + Zetaline[0,1]
+Zetaline[2,:] = [-2,ZetamidX]
+Zetaline[3,:] = [2,ZetamidX]
+
+plt.plot(Zetaline[0:2,1],Zetaline[0:2,0],'b')
+plt.plot(Zetaline[2:4,1],Zetaline[2:4,0],'r')
+
 # A circle of Radius 1
-plt.plot(circleX,circleY,color='r')
+plt.plot(circleX,circleY,color=[0.9,0.2,0.2,0.3],linewidth=6.8)
+
+plt.xlim([-2.0,2.0]); plt.ylim([-2.0,2.0])
+plt.gca().set_aspect('equal', adjustable='box') 
+plt.grid()
+
 plt.show() 
