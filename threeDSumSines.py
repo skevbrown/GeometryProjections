@@ -380,17 +380,7 @@ z1 = (-normal1[0]*xx1 - normal1[1]*yy1 - d1)*1/normal1[2]
 phi = 1.61803398875
 phiRadius = np.sqrt(1+phi**2)
 
-matRows = 40
-lineMat = np.zeros(matRows,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
-('xComp','f8'),('yComp','f8')])
-lineMat2 = np.zeros(matRows,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
-('xComp','f8'),('yComp','f8')])
-lineMat3 = np.zeros(matRows,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
-('xComp','f8'),('yComp','f8')])
-cirMat3a = np.zeros(100,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
-('xComp','f8'),('yComp','f8')])
-cirMat3b = np.zeros(100,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
-('xComp','f8'),('yComp','f8')])
+
     
 distAry = np.zeros([3,matRows])
 
@@ -503,31 +493,43 @@ zSphere2 = -zSphere
 fig1 = plt.figure(1)
 ax1 = fig1.gca(projection='3d')
 
-# The two blue half spheres
-ax1.plot_wireframe(xSphere,ySphere,zSphere,  color=[0.3,0.3,1.0,0.3])
-ax1.plot_wireframe(xSphere,ySphere2,zSphere, color=[0.3,0.3,1.0,0.3])
-ax1.plot_wireframe(xSphere,ySphere,zSphere2, color=[0.5,0.2,0.2,0.2])
-ax1.plot_wireframe(xSphere,ySphere2,zSphere2,color=[0.5,0.2,0.2,0.2])
+timeMx = 6*np.pi
+ti = np.arange(0,timeMx,(1/600)*timeMx)
+xlist4 = ti
+ylist4 = np.cos(ti)
+zlist4 = np.sin(3*ti)
 
-ax1.set_xlim([-6,6]); ax1.set_ylim([-6,6])
-ax1.set_zlim(-1.7,1.7)
+ax1.set_xlim([0,int(timeMx)]); ax1.set_ylim([-1,1])
+ax1.set_zlim(-1.0,1.0)
 
-xx1 = np.array([[0,5.0],[0,5.0]])
-yy1 = np.array([[0,0],[5.0,5.0]])
-z3 = z1*0
+xx1 = np.array([[0,int(timeMx)],[0,int(timeMx)]])
+yy1 = np.array([[0,0],[1.0,1.0]])
+#z3 = z1*0
 # Four surface to make One plane: Upper plane
-ax1.plot_surface( xx1, yy1,z3,color=( 0.4,0.6,0.0,0.1))
-ax1.plot_surface(-xx1, yy1,z3,color=( 0.4,0.6,0.0,0.1))
-ax1.plot_surface( xx1,-yy1,z3,color=(0.4, 0.6,0.0,0.1))
-ax1.plot_surface(-xx1,-yy1,z3,color=(0.4, 0.6,0.0,0.1))
+#ax1.plot_surface( xx1, yy1,z3,color=( 0.4,0.1,0.8,0.1))
+    #ax1.plot_surface(-xx1, yy1,z3,color=( 0.4,0.6,0.0,0.1))
+#ax1.plot_surface( xx1,-yy1,z3,color=(0.4, 0.1,0.8,0.1))
+    #ax1.plot_surface(-xx1,-yy1,z3,color=(0.4, 0.6,0.0,0.1))
 
 phiList4 = np.array(np.arange(0,np.pi/2,(1/10)*np.pi/2)) 
 thList4 = np.array([0]*len(phiList4))
 radList4 = np.array([1.0]*len(phiList4))
 
-xlist4,ylist4,zlist4 = sph2cartvec(thList4,phiList4,radList4)
-xlist4 = xlist4.flatten(); ylist4 = ylist4.flatten()
-zlist4= zlist4.flatten()
+matRows = len(ti)
+lineMat = np.zeros(matRows,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
+('xComp','f8'),('yComp','f8')])
+  #lineMat2 = np.zeros(matRows,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
+  #('xComp','f8'),('yComp','f8')])
+  #lineMat3 = np.zeros(matRows,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
+  #('xComp','f8'),('yComp','f8')])
+  #cirMat3a = np.zeros(100,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
+  #('xComp','f8'),('yComp','f8')])
+  #cirMat3b = np.zeros(100,dtype=[('xPnts','f8'),('yPnts','f8'),('zPnts','f8'),
+  #('xComp','f8'),('yComp','f8')])
+
+#sph2cartvec(thList4,phiList4,radList4)
+#xlist4 = xlist4.flatten(); ylist4 = ylist4.flatten()
+#zlist4= zlist4.flatten()
 
 for lrm in range(0,len(xlist4)):
     lineMat[lrm]= np.array([xlist4[lrm],ylist4[lrm],zlist4[lrm],0,0])
@@ -537,71 +539,12 @@ for lrm in range(0,len(xlist4)):
     lineMat[lrm][3] = a1; lineMat[lrm][4] = a2; 
 
 for lrm in range(0,len(xlist4)):
-    ax1.scatter(lineMat[lrm][0],lineMat[lrm][1],lineMat[lrm][2],color='red',s=52)
-    ax1.scatter(lineMat[lrm][3],lineMat[lrm][4],0,color='blue',s=52)
+    ax1.scatter3D(lineMat[lrm][0],lineMat[lrm][1],lineMat[lrm][2],color='red',s=10)
+#    ax1.plot(lineMat['xPnts'],lineMat['yPnts'],lineMat['zPnts'])
+#    ax1.scatter(lineMat[lrm][3],lineMat[lrm][4],0,color='blue',s=52)
 
-fig2 = plt.figure(2)          # A static 3d plot
-ax = fig2.gca(projection='3d')
-for ii in range(2, polindex*3, 3):
-    ax.plot(xyz[:,ii-2], xyz[:,ii-1], xyz[:,ii], color=(0.0,0.0,0.0,0.5), 
-    linewidth=0.3)
-
-for ii in range(2, azimindex*3, 3):
-    ax.plot(xyzLon[:,ii-2], xyzLon[:,ii-1], xyzLon[:,ii], 
-    c=(0.0,0.0,0.0,0.5), linewidth=0.5)
-
-for ii in range(0, len(xgrid) ):
-    ax.plot( [ xgrid[ii] ] *len(ygrid), ygrid, [ 0 ] * len(ygrid), 
-    c=(0.8,0.0,0.0,0.5), linewidth=1.0)
-
-for ii in range(0, len(ygrid) ):
-    ax.plot( xgrid, [ ygrid[ii] ] *len(xgrid), [ 0 ] * len(ygrid), 
-    c=(0.8,0.0,0.0,0.5), linewidth=1.0)
-
-# Four surface to make One plane: Upper plane
-ax.plot_surface(xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
-ax.plot_surface(-xx1,yy1,z1,color=(0.2,0.1,0.9,0.3))
-ax.plot_surface(xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
-ax.plot_surface(-xx1,-yy1,z1,color=(0.2,0.1,0.9,0.3))
-# Lower plane
-ax.plot_surface(xx1,yy1,-z1,color=(0.9,0.1,0.2,0.3))
-ax.plot_surface(-xx1,yy1,-z1,color=(0.9,0.1,0.2,0.3))
-ax.plot_surface(xx1,-yy1,-z1,color=(0.9,0.1,0.2,0.3))
-ax.plot_surface(-xx1,-yy1,-z1,color=(0.9,0.1,0.2,0.3))
-
-# Scatter points
-#ax.scatter(vecCornxyz1[0],vecCornxyz1[1],vecCornxyz1[2],s=24.2,
-#c=(0.9,0.1,0.1,1.0))
-#ax.scatter(vecCornxyz2[0],vecCornxyz2[1],vecCornxyz2[2],s=24.2,
-#c=(0.9,0.1,0.1,1.0))
-#ax.scatter(vecCornxyz3[0],vecCornxyz3[1],vecCornxyz3[2],s=24.2,
-#c=(0.9,0.1,0.1,1.0))
-
-# Plot the rotated cube
-cubePlot = np.copy(cubeRot2)
-
-ax.scatter(cubePlot['xPnts'][0:9],cubePlot['yPnts'][0:9],
-cubePlot['zPnts'][0:9],color='blue',s=54.2)
-#ax.plot(cubePlot['xPnts'][0:5],cubePlot['yPnts'][0:5],
-#cubePlot['zPnts'][0:5],label='Cube',color='blue',linewidth=0.7)
-#ax.plot(cubePlot['xPnts'][5:10],cubePlot['yPnts'][5:10],
-#cubePlot['zPnts'][5:10],label='Cube',color='blue',linewidth=0.7)
-ax.plot(cubePlot['xPnts'][10:12],cubePlot['yPnts'][10:12],
-cubePlot['zPnts'][10:12],color='red',linewidth=1.5)
-
-ax.set_xlim(xl, xh); ax.set_ylim(yl, yh);
-ax.set_zlim(zl, zh);
-
-
-#fig3 = plt.figure(3)
-#ax2 = fig3.gca(projection='polar' )
-
-xyzRad = np.sqrt(xyzRand[:,0]**2 + xyzRand[:,1]**2 ); 
-xyzAng = np.arcsin(xyzRand[:,1]/xyzRad );
-
-#ax1 = plt.subplot(111, projection='polar')
-#ax2.scatter(xyzAng,  xyzRad,  lw=0.5, c='red' )
-
+fig2 = plt.figure(2)
+plt.plot(ti,ylist4+zlist4)
 
 
 ############ ZETA VALUES FROM X,Y,Z ###################
@@ -628,117 +571,11 @@ xyzAng = np.arctan(xyzRand[:,1]/xyzRand[:,0] );
 
 
 
-fig3 = plt.figure(3)          # A static 3d plot
-ax = fig3.gca(projection='3d')
+#fig3 = plt.figure(3)          # A static 3d plot
+#ax = fig3.gca(projection='3d')
 
 
 
-# The two blue half spheres
-ax.plot_wireframe(xSphere,ySphere,zSphere,  color=[0.3,0.3,1.0,0.3])
-ax.plot_wireframe(xSphere,ySphere2,zSphere, color=[0.3,0.3,1.0,0.3])
-ax.plot_wireframe(xSphere,ySphere,zSphere2, color=[0.5,0.2,0.2,0.2])
-ax.plot_wireframe(xSphere,ySphere2,zSphere2,color=[0.5,0.2,0.2,0.2])
-
-ax.set_xlim([-6,6]); ax.set_ylim([-6,6])
-ax.set_zlim(-1.7,1.7)
-
-xx3 = np.array([[0,5.0],[0,5.0]])
-yy3 = np.array([[0,0],[5.0,5.0]])
-z3 = z1*0
-# Four surface to make One plane: Upper plane
-ax.plot_surface( xx3, yy3,z3,color=( 0.4,0.6,0.0,0.1))
-ax.plot_surface(-xx3, yy3,z3,color=( 0.4,0.6,0.0,0.1))
-ax.plot_surface( xx3,-yy3,z3,color=(0.4, 0.6,0.0,0.1))
-ax.plot_surface(-xx3,-yy3,z3,color=(0.4, 0.6,0.0,0.1))
-
-
-
-# Lines Highlight Triangle
-lrm = 0; xlist1 = np.array([1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0])
-
-
-for lrm in range(0,10):
-    lineMat3[lrm] = np.array([0,0,0, xlist1[lrm],0])
-    a1,a2,a3 = xyzunit(lineMat3[lrm][3],lineMat3[lrm][4])
-    lineMat3[lrm][0] = a1; lineMat3[lrm][1] = a2; 
-    lineMat3[lrm][2] = a3 
-
-for lrm in range(0,5):
-    ax.scatter(lineMat3[lrm][0],lineMat3[lrm][1],lineMat3[lrm][2],color='red',s=52)
-    ax.scatter(lineMat3[lrm][3],lineMat3[lrm][4],0,color='blue',s=52)
-
-xlist2 = np.array([-0.5,0.5,1.5,2.5,3.5,4.5])
-ylist2 = np.array([np.sqrt(3)/2]*len(xlist2))
-    
-for lrm in range(0,len(xlist2)):
-    lineMat3[lrm+10] = np.array([0,0,0, xlist2[lrm],ylist2[lrm]])
-    a1,a2,a3 = xyzunit(lineMat3[lrm+10][3],lineMat3[lrm+10][4])
-    lineMat3[lrm+10][0] = a1; lineMat3[lrm+10][1] = a2; 
-    lineMat3[lrm+10][2] = a3
-    
-for lrm in range(0,len(xlist2)):
-    ax.scatter(lineMat3[lrm+10][0],lineMat3[lrm+10][1],lineMat3[lrm+10][2],color='red',s=52)
-    ax.scatter(lineMat3[lrm+10][3],lineMat3[lrm+10][4],0,color='blue',s=52)
-
-xlist3 = np.array([-5.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0])
-ylist3 = np.array([np.sqrt(3)]*len(xlist3))
-
-for lrm in range(0,len(xlist3)):
-    lineMat3[lrm+14] = np.array([0,0,0, xlist3[lrm],ylist3[lrm]])
-    a1,a2,a3 = xyzunit(lineMat3[lrm+14][3],lineMat3[lrm+14][4])
-    lineMat3[lrm+14][0] = a1; lineMat3[lrm+14][1] = a2; 
-    lineMat3[lrm+14][2] = a3
-    
-for lrm in range(0,len(xlist3)):
-    ax.scatter(lineMat3[lrm+14][0],lineMat3[lrm+14][1],lineMat3[lrm+14][2],color='red',s=52)
-    ax.scatter(lineMat3[lrm+14][3],lineMat3[lrm+14][4],0,color='blue',s=52)
-
-xlist5 = np.array([0.5,1.5,2.5,3.5,4.5])
-ylist5 = np.array([(-1)*np.sqrt(3)/2]*len(xlist5))
-    
-for lrm in range(0,len(xlist5)):
-    lineMat3[lrm+25] = np.array([0,0,0, xlist5[lrm],ylist5[lrm]])
-    a1,a2,a3 = xyzunit(lineMat3[lrm+25][3],lineMat3[lrm+25][4])
-    lineMat3[lrm+25][0] = a1; lineMat3[lrm+25][1] = a2; 
-    lineMat3[lrm+25][2] = a3
-    
-for lrm in range(0,len(xlist5)):
-    ax.scatter(lineMat3[lrm+25][0],lineMat3[lrm+25][1],lineMat3[lrm+25][2],color='red',s=52)
-    ax.scatter(lineMat3[lrm+25][3],lineMat3[lrm+25][4],0,color='blue',s=52)
-
-ti = np.arange(0,2*np.pi,(1/len(cirMat3a))*2*np.pi)
-xlist6 = np.array((1+np.cos(ti)))
-ylist6 = np.array(np.sin(ti))
-    
-for lrm in range(0,len(xlist6)):
-    cirMat3a[lrm] = np.array([0,0,0, xlist6[lrm],ylist6[lrm]])
-    a1,a2,a3 = xyzunit(cirMat3a[lrm][3],cirMat3a[lrm][4])
-    cirMat3a[lrm][0] = a1; cirMat3a[lrm][1] = a2; 
-    cirMat3a[lrm][2] = a3
-    
-for lrm in range(0,len(xlist6)):
-    ax.scatter(cirMat3a[lrm][0],cirMat3a[lrm][1],cirMat3a[lrm][2],color='red',s=10)
-    ax.scatter(cirMat3a[lrm][3],cirMat3a[lrm][4],0,color='blue',s=10)
-
-xlist7 = np.array((1/2+np.cos(ti)))
-ylist7 = np.array((np.sqrt(3)/2)+np.sin(ti))
-    
-for lrm in range(0,len(xlist7)):
-    cirMat3b[lrm] = np.array([0,0,0, xlist7[lrm],ylist7[lrm]])
-    a1,a2,a3 = xyzunit(cirMat3b[lrm][3],cirMat3b[lrm][4])
-    cirMat3b[lrm][0] = a1; cirMat3b[lrm][1] = a2; 
-    cirMat3b[lrm][2] = a3
-    
-for lrm in range(0,len(xlist7)):
-    ax.scatter(cirMat3b[lrm][0],cirMat3b[lrm][1],cirMat3b[lrm][2],color='red',s=10)
-    ax.scatter(cirMat3b[lrm][3],cirMat3b[lrm][4],0,color='blue',s=10)
-
-#fig4 = plt.figure(4)
-
-#plt.plot(riemMat['xvec'],'black',linewidth=1.1)
-#plt.plot(riemMat['zvec'],'b',linewidth=0.7)
-#plt.plot(riemMat['ZetaR'],'r',linewidth=0.7)
-#plt.plot(riemMat['EtaR'],'g',linewidth=0.7)
 
 
 

@@ -53,6 +53,36 @@ def sph2cart(azim, polar, r):
     z = r * np.sin(polar)
     return x, y, z
 
+def zeta(x,y,z):
+    re = x/ (1-z)
+    im = y/ (1-z)
+    comp = np.complex(re,im)
+    return comp
+
+def eta(x,y,z):
+    re = x/  (1+z)
+    im = -y/ (1+z)
+    comp = np.complex(re,im)
+    return comp
+
+def xyzunit(zReal,zImag):
+    denom = 1 + zReal**2 + zImag**2
+    x = 2*zReal / denom
+    y = 2*zImag / denom
+    z = (-1 + zReal**2 + zImag**2) / denom
+    xyz = np.array( [x,y,z] )
+    return xyz
+
+def xyzEta(zReal,zImag):
+    zImag = zImag*(-1)
+    sqsum = zReal**2 + zImag**2
+    denom = 1 + sqsum
+    x = 2*zReal / denom
+    y = -2*zImag / denom
+    z = (1 - sqsum) / denom
+    xyz = np.array( [x,y,z] )
+    return xyz
+
 def rect(r, theta):
     """theta in radians
 
@@ -79,7 +109,7 @@ cart2sphvec = np.vectorize(cart2sph);
 
 
 
-xx1, yy1 = np.meshgrid(np.arange(-2,2.05,0.05),np.arange(-2,2.05,0.05))
+xx1, yy1 = np.meshgrid(np.arange(-4,4.1,0.1),np.arange(-4,4.1,0.1))
 #d1 = -np.sum(point1*normal1)
 z1 = xx1 * 0
 
@@ -88,6 +118,19 @@ circlePol = np.array([0]* len(circleAx))
 circleRad = np.array([1.0]* len(circleAx))
 
 circleX, circleY, circleZ = sph2cartvec(circleAx,circlePol,circleRad)
+
+circleX2 = circleX.copy()+ 2.0
+circleY2 = circleY.copy()+ 2.0
+circleZ2 = circleZ.copy()
+
+sphCircleX = circleX.copy()
+sphCircleY = circleY.copy()
+sphCircleZ = circleZ.copy()
+
+for i in range(0,len(sphCircleX)):
+    sphCircleX[i], sphCircleY[i], sphCircleZ[i] = xyzunit(circleX2[i],circleY2[i])
+
+
 
 npt = 40; npi = npt-1; nptB = npt*2
 indUp = 1+1/npi
@@ -118,7 +161,7 @@ Wire3 = fig1.gca(projection='3d')
 # The two blue half spheres
 Wire3.plot_wireframe(xSphere,ySphere,zSphere,color=[0.3,0.3,1.0,0.3])
 Wire3.plot_wireframe(xSphere,ySphere2,zSphere,color=[0.3,0.3,1.0,0.3])
-Wire3.set_xlim([-2,2]); Wire3.set_ylim([-2,2])
+Wire3.set_xlim([-4,4]); Wire3.set_ylim([-4,4])
 Wire3.set_zlim(-1.0,1.0)
 
 # Line from (0,0,1)
@@ -145,6 +188,9 @@ Wire3.scatter(xx1,yy1,z1,color=[0.7,0.2,0.3,0.3],s=8)
 # A circle of Radius 1
 Wire3.scatter(circleX,circleY,circleZ,color='red',s=8)
 
+# Translated cirlce
+Wire3.scatter(circleX2,circleY2,circleZ2,color='blue',s=8)
+Wire3.scatter(sphCircleX,sphCircleY,sphCircleZ,color='red',s=8)
 
 fig2 = plt.figure(2)
 Wire4 = fig2.gca(projection='3d')
